@@ -1,3 +1,23 @@
+## Function to add gene for repective rsid, if genes are not provided by user
+addgene <- function(gwasmulti){
+
+  ensembl <- useMart(biomart="ENSEMBL_MART_SNP", host="grch37.ensembl.org", path="/biomart/martservice", dataset="hsapiens_snp")
+
+  human = useMart(biomart="ENSEMBL_MART_ENSEMBL", host="feb2014.archive.ensembl.org", path="/biomart/martservice", dataset="hsapiens_gene_ensembl")
+
+  gwasmulti$gene <- "NA"
+  for(i in rownames(gwasmulti)){
+    xx <- getBM(attributes=c( "ensembl_gene_stable_id"),filters="snp_filter", values=gwasmulti[i, "SNP"],mart=ensembl, uniqueRows=TRUE)
+    if (nrow(xx) == 0){
+      gwasmulti[i,]$gene <- "NA"
+    }else{
+      gene <- getBM(attributes = c("hgnc_symbol"),
+                    filters = "ensembl_gene_id", values = unlist(xx), mart = human)
+      gwasmulti[i,]$gene <- if (nrow(gene) == 0) "NA" else  toString( unlist(gene))
+    }}
+  print("Finished mapping")
+  return(gwasmulti)
+}
 ######################################### ######################################### #########################################
 ############## FAST PROCESSPHEGWAS - THIS IS USED FOR PROCESISNG THE PHENOTYPE BEFORE THE LANDSCAPE FUNCTION
 ######################################### ######################################### #########################################
@@ -65,11 +85,21 @@ fastprocessphegwas <- function(phenos,LDblock= FALSE){
     out <- unite_(out, hju, selection, sep = "and", remove = TRUE)
   }
   out %>% gather(color,Entire_Val,-CHR, -label) -> gwasmulti.meltF
+
+  if(length(grep("gene", colnames(list.df_pre[[1]]))) == 0){
+  gwasmulti.melt <- gwasmulti.meltF %>% separate(Entire_Val, c("BP", "SNP","A1","A2","BETA","SE","P"), "and")
+  ## Getting the dataframe that can be used
+  d <- data.frame(CHR = as.numeric(gwasmulti.melt$CHR), BP = as.numeric(gwasmulti.melt$BP),A1 =gwasmulti.melt$A1,A2 =gwasmulti.melt$A2,SNP =gwasmulti.melt$SNP,
+                  P = as.numeric(gwasmulti.melt$P),BETA = as.numeric(gwasmulti.melt$BETA),SE = as.numeric(gwasmulti.melt$SE),
+                  PHENO = gwasmulti.melt$color,label = gwasmulti.melt$label)
+
+  }else{
   gwasmulti.melt <- gwasmulti.meltF %>% separate(Entire_Val, c("BP", "SNP","A1","A2","BETA","SE","P","gene"), "and")
   ## Getting the dataframe that can be used
   d <- data.frame(CHR = as.numeric(gwasmulti.melt$CHR), BP = as.numeric(gwasmulti.melt$BP),A1 =gwasmulti.melt$A1,A2 =gwasmulti.melt$A2,SNP =gwasmulti.melt$SNP,
                   P = as.numeric(gwasmulti.melt$P),BETA = as.numeric(gwasmulti.melt$BETA),SE = as.numeric(gwasmulti.melt$SE),gene = gwasmulti.melt$gene,
                   PHENO = gwasmulti.melt$color,label = gwasmulti.melt$label)
+  }
   d <- subset(d, (is.numeric(CHR) & is.numeric(BP) & is.numeric(P) ))
   d <- d[order(d$CHR, d$BP), ]
   d$logp <- round(-log10(d$P),3)
@@ -142,6 +172,10 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
       ungroup() %>%
       group_by(PHENO,CHR) %>%
       slice(which.max(logp))
+    if(length(grep("gene", colnames(d))) == 0){
+      print("Applying BioMArt module for matching gene to rsid")
+      gwasmultifull <- addgene(gwasmultifull)
+    }
     ## Selecting only chr 1 to 22 ignoring X and Y, phenos is the order that we wannt the traits to be ordered
     gwas_surface_full <- acast(gwasmultifull, gwasmultifull$PHENO ~ gwasmultifull$CHR, value.var = "logp")[phenos,1:22]
     ## To remove the cases which dont have values fro all the snps
@@ -183,6 +217,11 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
         ungroup() %>%
         group_by(lab, PHENO) %>%
         slice(which.max(logp))
+
+      if(length(grep("gene", colnames(d))) == 0){
+        print("Applying BioMArt module for matching gene to rsid")
+        gwasmulti <- addgene(gwasmulti)
+      }
 
       ###rewriting calculating ld logic
       if (calculateLD){
