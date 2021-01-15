@@ -343,3 +343,64 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
     p
   }
 }
+
+######################################### ######################################### #########################################
+############## FAST PROCESSPHEGWAS - THIS IS USED FOR PROCESISNG THE PHENOTYPE BEFORE THE LANDSCAPE FUNCTION
+######################################### ######################################### #########################################
+#' Prepare the dataframe to pass to landscape function
+#'
+#' @import tidyverse
+#' @import tidyr
+#' @import reshape2
+#' @import factoextra
+#' @import cluster
+#' @import seriation
+#' @importFrom data.table fread rbindlist
+#' @param phenos Vector of names of dataframes that need to do iPheGWAS on.
+#' @param dentogram to show structural differences
+#' @return A processed dataframe to pass to PheGWAS landscape function
+#' @details Make sure there are no duplicate rsid's in any of the dataframe, If there aremake sure to resolve it before passing it to this function.
+#' @author George Gittu
+#' @examples
+#' phenos <- c("HDL", "LDL", "TRIGS", "TOTALCHOLESTROL")
+#' iphegwas(phenos)
+#' iphegwas(phenos,dentogram = TRUE)
+#' @export
+
+iphegwas <- function(phenos,dentogram = FALSE){
+x <- fread("~/Desktop/SIMULATIONS/fourthcase/fourthcaseout/rg0.20.1fourthoutput")
+x <- x  %>% select("CHR","BP","rsid","A1","A2")
+action3 = . %>% subset(rsid %in% x$rsid) %>% merge(x, by= c("CHR","BP"), how='inner') %>%
+  select (-c(rsid.x)) %>% rename(rsid = rsid.y) %>% mutate(ZZ = beta/se)  %>% mutate(Z = ifelse(toupper(A1.x) == toupper(A1.y), ZZ * -1,ZZ),BETA =beta,SE = se) %>%
+  select("CHR","BP","rsid","P.value","Z","BETA","SE") %>%
+  distinct(rsid, .keep_all= TRUE)
+list.df_pre = mget(phenos,envir = .GlobalEnv)
+
+for (df in 1:length(list.df_pre)){
+  list.df_pre[[df]] <-  list.df_pre[[df]] %>% action3()
+  colnames(list.df_pre[[df]]) <- toupper(colnames(list.df_pre[[df]]))
+
+}
+xfull <- rbindlist(list.df_pre,idcol = "PHENOS")
+xfull %<>% rename(FEATURE = RSID) %>% select("PHENOS","FEATURE","Z")
+gwas_surface_pre <- xfull[,c("PHENOS","FEATURE","Z")]
+gwas_surface <- acast(gwas_surface_pre, PHENOS~FEATURE, value.var="Z") #>>>>>>>>>>>>>Z ang logcal
+gwas_surface <- gwas_surface[ , colSums(is.na(gwas_surface)) == 0]
+res.dist <- get_dist(gwas_surface, method = "pearson") #>>>>>>>>>>>>>>>>>>
+correlation.coefficent <- as.matrix(1 - res.dist)[phenos,phenos]
+A <- abs(correlation.coefficent)
+AA <- as.dist(1- A)
+res.hc1 <- hclust(d = AA,method = "mcquitty") #>>
+res.hc1 <- reorder(res.hc1, AA, method = "OLO")
+if(dentogram){
+ fviz_dend(res.hc1, # Cut in four groups
+                           cex = 2, # label size
+                           k_colors = c("#2E9FDF", "#00AFBB", "#E7B800", "#FC4E07"),
+                           color_labels_by_k = TRUE, # color labels by groups
+                           rect = TRUE,
+                           main = "title"# Add rectangle around groups,
+  )
+}else{
+  phenos[res.hc1$order]
+}
+}

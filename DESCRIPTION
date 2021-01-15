@@ -22,7 +22,10 @@ Imports:
         reshape2 (>= 1.4.3),
         xml2(>= 1.2.2),
         stringr(>= 1.4.0),
-        data.table (>= 1.13.6)
+        data.table (>= 1.13.6),
+        seriation (>= 1.2-9),
+        factoextra (>= 1.0.7),
+        cluster(>= 2.1.0)
 Suggests: 
     knitr,
     rmarkdown
