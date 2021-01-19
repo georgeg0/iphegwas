@@ -26,6 +26,8 @@ Imports:
         seriation (>= 1.2-9),
         factoextra (>= 1.0.7),
         cluster(>= 2.1.0)
+Remotes:
+        MichelNivard/GenomicSEM
 Suggests: 
     knitr,
     rmarkdown

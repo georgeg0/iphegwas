@@ -401,27 +401,33 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
 #' @details Make sure there are no duplicate rsid's in any of the dataframe, If there aremake sure to resolve it before passing it to this function.
 #' @author George Gittu
 #' @examples
+#' \dontrun{
 #' phenos <- c("HDL", "LDL", "TRIGS", "TOTALCHOLESTROL")
-#' iphegwas(phenos)
-#' iphegwas(phenos,dentogram = TRUE)
+#' iphegwas(phenos,skeltonfile = "/Users/ggeorge/Desktop/skeltonSNPS.tsv")
+#' iphegwas(phenos,dentogram = TRUE,skeltonfile = "/Users/ggeorge/Desktop/skeltonSNPS.tsv")
+#' }
 #' @export
-
-iphegwas <- function(phenos,dentogram = FALSE){
-x <- fread("~/Desktop/SIMULATIONS/fourthcase/fourthcaseout/rg0.20.1fourthoutput")
-x <- x  %>% select("CHR","BP","rsid","A1","A2")
-action3 = . %>% subset(rsid %in% x$rsid) %>% merge(x, by= c("CHR","BP"), how='inner') %>%
-  select (-c(rsid.x)) %>% rename(rsid = rsid.y) %>% mutate(ZZ = beta/se)  %>% mutate(Z = ifelse(toupper(A1.x) == toupper(A1.y), ZZ * -1,ZZ),BETA =beta,SE = se) %>%
-  select("CHR","BP","rsid","P.value","Z","BETA","SE") %>%
-  distinct(rsid, .keep_all= TRUE)
+iphegwas <- function(phenos,dentogram = FALSE,skeltonfile){
+skeltonsnps <- fread(skeltonfile)
 list.df_pre = mget(phenos,envir = .GlobalEnv)
-
 for (df in 1:length(list.df_pre)){
+  if(length(grep("Z", colnames( list.df_pre[[df]]))) == 0){
+    action3 = . %>% subset(rsid %in% skeltonsnps$rsid) %>% merge(skeltonsnps, by= "rsid", how='inner') %>%
+      mutate(ZZ = beta/se)  %>%
+      mutate(Z = ifelse(toupper(A1.x) == toupper(A1.y), ZZ * -1,ZZ)) %>% rename(FEATURE =rsid) %>%
+      select("FEATURE","Z") %>%
+      distinct(FEATURE, .keep_all= TRUE)
   list.df_pre[[df]] <-  list.df_pre[[df]] %>% action3()
+  }else{
+    action3 = . %>% drop_na(rsid) %>% subset(rsid %in% skeltonsnps$rsid) %>% merge(skeltonsnps, by= "rsid", how='inner') %>%
+      mutate(Z = ifelse(toupper(A1.x) == toupper(A1.y), Z * -1,Z)) %>%rename(FEATURE =rsid) %>%
+      select("FEATURE","Z") %>%
+      distinct(FEATURE, .keep_all= TRUE)
+    list.df_pre[[df]] <-  list.df_pre[[df]] %>% action3()
+  }
   colnames(list.df_pre[[df]]) <- toupper(colnames(list.df_pre[[df]]))
-
 }
 xfull <- rbindlist(list.df_pre,idcol = "PHENOS")
-xfull %<>% rename(FEATURE = RSID) %>% select("PHENOS","FEATURE","Z")
 gwas_surface_pre <- xfull[,c("PHENOS","FEATURE","Z")]
 gwas_surface <- acast(gwas_surface_pre, PHENOS~FEATURE, value.var="Z") #>>>>>>>>>>>>>Z ang logcal
 gwas_surface <- gwas_surface[ , colSums(is.na(gwas_surface)) == 0]
@@ -442,4 +448,57 @@ if(dentogram){
 }else{
   phenos[res.hc1$order]
 }
+}
+
+######################################### ######################################### #########################################
+############## FAST PROCESSPHEGWAS - THIS IS USED FOR PROCESISNG THE PHENOTYPE BEFORE THE LANDSCAPE FUNCTION
+######################################### ######################################### #########################################
+#' Prepare the dataframe to pass to landscape function
+#' @import GenomicSEM
+#' @param phenos Vector of names of dataframes that need to do iPheGWAS on.
+#' @param dentogram to show structural differences
+#' @return A processed dataframe to pass to PheGWAS landscape function
+#' @details Make sure there are no duplicate rsid's in any of the dataframe, If there aremake sure to resolve it before passing it to this function.
+#' @author George Gittu
+#' @examples
+#' \dontrun{
+#' phenos <- c("HDL", "LDL", "TRIGS", "TOTALCHOLESTROL")
+#' filennames <- c("HDL", "LDL", "TRIGS", "TOTALCHOLESTROL")
+#' hm3 = "/Users/ggeorge/Desktop/ldscR/w_hm3.snplist"
+#' ld = "/Users/ggeorge/Desktop/ldscR/MIX/eur_w_ld_chr"
+#' N = c(53293,46350,51710,143677)
+#' correlation.coeff <- ldscmod(phenos,filenames,N,hm3,ld)
+#' }
+#' @export
+ldscmod <- function(phenos,filenames,N,hm3,ld){
+  setwd(tempdir(check = TRUE))
+  print(getwd())
+  f <- list.files(getwd(), include.dirs = F, full.names = T, recursive = T)
+  file.remove(f)
+  for (i in 1:length(phenos)){
+    munge(files =filenames[i],hm3 = hm3,N =N[i],
+          trait.names =phenos[i])
+  }
+  filenames <- list.files(getwd(), pattern ="*.sumstats.gz", full.names=TRUE)
+  f <- path_file(filenames)
+  p <- sub('\\.sumstats.gz$', '', f)
+  mm <- capture.output(ldsc(traits =f,
+                            sample.prev = rep(NA, length(filenames)),
+                            population.prev = rep(NA, length(filenames)) ,ld = ld,wld = ld,trait.names =p))
+  preline<- grep("Genetic Correlation Results", mm, fixed = TRUE)
+  postline<- grep("LDSC finished running", mm, fixed = TRUE)
+  filedata <- mm[(preline+1):(postline-1)]
+  filedata <- gsub('^.*between\\s*|\\s*\\(.*$', '', filedata)
+  filedata <- sub( ":", "", filedata, fixed = TRUE)
+  filedata <- sub( " and", "", filedata, fixed = TRUE)
+  filedata_list<- strsplit(filedata, split = " ")
+  new <- Reduce(rbind, filedata_list)
+  names <- unique(c(new[,1], new[,2]))
+  corrmat <- matrix(nrow =length(names),  ncol = (length(names)), dimnames = list(names, names))
+  for (i in 1:length(filedata_list)){
+    corrmat[filedata_list[[i]][1],filedata_list[[i]][2]] <- as.numeric(filedata_list[[i]][3])
+    corrmat[filedata_list[[i]][2],filedata_list[[i]][1]] <- as.numeric(filedata_list[[i]][3])
+  }
+  diag(corrmat) <- 1
+  return(corrmat)
 }
