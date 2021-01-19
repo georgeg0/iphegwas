@@ -23,8 +23,8 @@ Make sure there are no duplicate rsid's in any of the dataframe, If there aremak
 \examples{
 \dontrun{
 phenos <- c("HDL", "LDL", "TRIGS", "TOTALCHOLESTROL")
-iphegwas(phenos)
-iphegwas(phenos,dentogram = TRUE)
+iphegwas(phenos,skeltonfile = "/Users/ggeorge/Desktop/skeltonSNPS.tsv")
+iphegwas(phenos,dentogram = TRUE,skeltonfile = "/Users/ggeorge/Desktop/skeltonSNPS.tsv")
 }
 }
 \author{
