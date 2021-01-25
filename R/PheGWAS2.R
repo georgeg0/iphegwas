@@ -176,6 +176,7 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
       print("Applying BioMArt module for matching gene to rsid")
       gwasmultifull <- addgene(gwasmultifull)
     }
+    gwasmultifull <- gwasmultifull[!is.na(gwasmultifull$CHR) & !is.na(gwasmultifull$BP),]
     ## Selecting only chr 1 to 22 ignoring X and Y, phenos is the order that we wannt the traits to be ordered
     gwas_surface_full <- acast(gwasmultifull, gwasmultifull$PHENO ~ gwasmultifull$CHR, value.var = "logp")[phenos,1:22]
     ## To remove the cases which dont have values fro all the snps
