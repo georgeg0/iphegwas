@@ -87,3 +87,80 @@
 #'
 "tchol"
 
+#' LD Block data summarized in Approximately independent linkage disequilibrium blocks in human populations
+#'
+#' The dataset 'bppeur' is a data.frame object with the LD blocks for European population.
+#'
+#' @docType data
+#'
+#' @usage data(bppeur)
+#'
+#' @format A dataframe with simulated GWAS results (simulated using plink 1.9)
+#' \itemize{
+#'   \item chr is the chromosome number
+#'   \item start is the start position of the chromosome
+#'   \item stop is the end position of the chromosome
+#' }
+#'
+#' @keywords datasets
+#' @return A data frame
+#'
+"bppeur"
+
+#' LD Block data summarized in Approximately independent linkage disequilibrium blocks in human populations
+#'
+#' The dataset 'bppasn' is a data.frame object with the LD blocks for asian population.
+#'
+#' @docType data
+#'
+#' @usage data(bppasn)
+#'
+#' @format A dataframe with simulated GWAS results (simulated using plink 1.9)
+#' \itemize{
+#'   \item chr is the chromosome number
+#'   \item start is the start position of the chromosome
+#'   \item stop is the end position of the chromosome
+#' }
+#'
+#' @keywords datasets
+#' @return A data frame
+#'
+"bppasn"
+
+#' LD Block data summarized in Approximately independent linkage disequilibrium blocks in human populations
+#'
+#' The dataset 'bppafr' is a data.frame object with the LD blocks for European population.
+#'
+#' @docType data
+#'
+#' @usage data(bppafr)
+#'
+#' @format A dataframe with simulated GWAS results (simulated using plink 1.9)
+#' \itemize{
+#'   \item chr is the chromosome number
+#'   \item start is the start position of the chromosome
+#'   \item stop is the end position of the chromosome
+#' }
+#'
+#' @keywords datasets
+#' @return A data frame
+#'
+"bppafr"
+
+#' Skeleton SNP's for ipheGWAS
+#'
+#' @docType data
+#'
+#' @usage data(skeltonsnps)
+#'
+#' @format A dataframe with Skeleton SNP's (simulated using plink 1.9)
+#' \itemize{
+#'   \item rsid is the SNP
+#'   \item A1 is allele1
+#'   \item A1 is allele2
+#' }
+#'
+#' @keywords datasets
+#' @return A data frame
+#'
+"skeltonsnps"

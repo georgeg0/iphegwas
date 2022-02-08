@@ -36,7 +36,7 @@ addgene <- function(gwasmulti){
 #' ## y is ready to be passed to function landscape
 #' y <- fastprocessphegwas(phenos)
 #' @export
-fastprocessphegwas <- function(phenos,LDblock= FALSE){
+fastprocessphegwas <- function(phenos,LDblock= FALSE,LDpop= "eur"){
   if(is.vector(phenos) & !is.list(phenos)) {
     list.df_pre = mget(phenos,envir = .GlobalEnv)
     for (df in 1:length(list.df_pre)){
@@ -48,9 +48,16 @@ fastprocessphegwas <- function(phenos,LDblock= FALSE){
   action3 = . %>% mutate(P.value = as.double(P.value))
   list.df_pre <- lapply(list.df_pre, action3)
   if(LDblock){
+    print("Processing for LDBlocks passed by the user")
     bpp = read.table(LDblock,header=TRUE,sep = "\t")
-  }else{
-    bpp = read.table("/Users/ggeorge/Downloads/nygcresearch-ldetect-data-ac125e47bf7f/EUR/fourier_ls-all.bed",header=TRUE,sep = "\t")
+  }else if(LDpop == "asn"){
+    print("Processing for AFR LDBlocks")
+    bpp = bppasn
+  }else if(LDpop == "afr"){
+    print("Processing for ASN LDBlocks")
+      bpp = bppasn
+  }else {
+      bpp = bppeur
   }
   colnames(bpp)[1] <- "CHR"
   bpp$CHR <-as.integer(gsub("chr","",bpp$CHR))
@@ -404,12 +411,11 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
 #' @examples
 #' \dontrun{
 #' phenos <- c("HDL", "LDL", "TRIGS", "TOTALCHOLESTROL")
-#' iphegwas(phenos,skeltonfile = "/Users/ggeorge/Desktop/skeltonSNPS.tsv")
-#' iphegwas(phenos,dentogram = TRUE,skeltonfile = "/Users/ggeorge/Desktop/skeltonSNPS.tsv")
+#' iphegwas(phenos)
+#' iphegwas(phenos,dentogram = TRUE)
 #' }
 #' @export
-iphegwas <- function(phenos,dentogram = FALSE,skeltonfile){
-skeltonsnps <- fread(skeltonfile)
+iphegwas <- function(phenos,dentogram = FALSE){
 list.df_pre = mget(phenos,envir = .GlobalEnv)
 for (df in 1:length(list.df_pre)){
   if(length(grep("Z", colnames( list.df_pre[[df]]))) == 0){

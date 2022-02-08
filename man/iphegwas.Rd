@@ -4,7 +4,7 @@
 \alias{iphegwas}
 \title{Prepare the dataframe to pass to landscape function}
 \usage{
-iphegwas(phenos, dentogram = FALSE, skeltonfile)
+iphegwas(phenos, dentogram = FALSE)
 }
 \arguments{
 \item{phenos}{Vector of names of dataframes that need to do iPheGWAS on.}
@@ -23,8 +23,8 @@ Make sure there are no duplicate rsid's in any of the dataframe, If there aremak
 \examples{
 \dontrun{
 phenos <- c("HDL", "LDL", "TRIGS", "TOTALCHOLESTROL")
-iphegwas(phenos,skeltonfile = "/Users/ggeorge/Desktop/skeltonSNPS.tsv")
-iphegwas(phenos,dentogram = TRUE,skeltonfile = "/Users/ggeorge/Desktop/skeltonSNPS.tsv")
+iphegwas(phenos)
+iphegwas(phenos,dentogram = TRUE)
 }
 }
 \author{

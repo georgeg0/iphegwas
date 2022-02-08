@@ -4,7 +4,7 @@
 \alias{fastprocessphegwas}
 \title{Prepare the dataframe to pass to landscape function}
 \usage{
-fastprocessphegwas(phenos, LDblock = FALSE)
+fastprocessphegwas(phenos, LDblock = FALSE, LDpop = "eur")
 }
 \arguments{
 \item{phenos}{Vector of names of dataframes that need to do PheGWAS on. Arrange the dataframe in the order how the the phenotypes should align in y axis}
