@@ -32,6 +32,10 @@ addgene <- function(gwasmulti){
 #' @details Make sure there are no duplicate rsid's in any of the dataframe, If there aremake sure to resolve it before passing it to this function.
 #' @author George Gittu
 #' @examples
+#' HDL <- hdl
+#' LDL <- ldl)
+#' TRIGS <- trig
+#' TOTALCHOLESTROL <- tchol
 #' phenos <- c("HDL", "LDL", "TRIGS", "TOTALCHOLESTROL")
 #' ## y is ready to be passed to function landscape
 #' y <- fastprocessphegwas(phenos)
@@ -149,9 +153,6 @@ fastprocessphegwas <- function(phenos,LDblock= FALSE,LDpop= "eur"){
 #' @author George Gittu
 #' @examples
 # \dontrun{
-#' phenos <- c("HDL", "LDL", "TRIGS", "TOTALCHOLESTROL")
-#' ## pass the dataframe from the processphegwas
-#' y <- fastprocessphegwas(phenos)
 #'
 #' 3D landscape visualization of all the phenotypes across the base pair positions(above a threshold of -log10 (p) 6)
 #' landscapefast(y,sliceval = 10,phenos =phenos)
