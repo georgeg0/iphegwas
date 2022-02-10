@@ -153,9 +153,11 @@ fastprocessphegwas <- function(phenos,LDblock= FALSE,LDpop= "eur"){
 #' ## pass the dataframe from the processphegwas
 #' y <- fastprocessphegwas(phenos)
 #'
-#'
 #' 3D landscape visualization of all the phenotypes across the base pair positions(above a threshold of -log10 (p) 6)
 #' landscapefast(y,sliceval = 10,phenos =phenos)
+#'
+#' #' 3D landscape visualization after applying iPheGWAS
+#' landscapefast(y,sliceval = 10,phenos = iphegwas(phenos))
 #'
 #' 3D landscape visualization of chromosome number 19 (above a threshold of -log10 (p) 10)
 #' landscapefast(y,sliceval = 7.5,chromosome = 19,phenos =phenos)
@@ -406,13 +408,15 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
 #' @importFrom data.table fread rbindlist
 #' @param phenos Vector of names of dataframes that need to do iPheGWAS on.
 #' @param dentogram to show structural differences
-#' @return A processed dataframe to pass to PheGWAS landscape function
+#' @return A processed dataframe to pass to PheGWAS landscape function/ dentogram if it's TRUE
 #' @details Make sure there are no duplicate rsid's in any of the dataframe, If there aremake sure to resolve it before passing it to this function.
 #' @author George Gittu
 #' @examples
 #' \dontrun{
 #' phenos <- c("HDL", "LDL", "TRIGS", "TOTALCHOLESTROL")
+#' ## This gives the order after applying iPheGWAS. We can pass this order to the landscape function
 #' iphegwas(phenos)
+#' ## This gives the dentogram as output
 #' iphegwas(phenos,dentogram = TRUE)
 #' }
 #' @export
