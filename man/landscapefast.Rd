@@ -14,6 +14,7 @@ landscapefast(
   calculateLD = FALSE,
   mutualLD = FALSE,
   phenos,
+  genemap = FALSE,
   geneview = FALSE,
   levelsdown = 0
 )

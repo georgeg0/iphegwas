@@ -168,7 +168,7 @@ fastprocessphegwas <- function(phenos,LDblock= FALSE,LDpop= "eur"){
 #}
 #' @export
 landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.75,
-                          D = 0.75,calculateLD = FALSE, mutualLD = FALSE,phenos,geneview = FALSE,levelsdown = 0){
+                          D = 0.75,calculateLD = FALSE, mutualLD = FALSE,phenos,genemap= FALSE,geneview = FALSE,levelsdown = 0){
   if(chromosome == FALSE){
     print("Processing for the entire chromosome")
     # this is for the MAtrix to process the entire chromosome
@@ -179,7 +179,7 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
       ungroup() %>%
       group_by(PHENO,CHR) %>%
       slice(which.max(logp))
-    if(length(grep("gene", colnames(d))) == 0){
+    if(length(grep("gene", colnames(d))) == 0 & genemap == TRUE){
       print("Applying BioMArt module for matching gene to rsid")
       gwasmultifull <- addgene(gwasmultifull)
     }
@@ -402,6 +402,7 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
 #' @import factoextra
 #' @import cluster
 #' @import seriation
+#' @import data.table
 #' @importFrom data.table fread rbindlist
 #' @param phenos Vector of names of dataframes that need to do iPheGWAS on.
 #' @param dentogram to show structural differences
@@ -421,13 +422,14 @@ for (df in 1:length(list.df_pre)){
   if(length(grep("Z", colnames( list.df_pre[[df]]))) == 0){
     action3 = . %>% subset(rsid %in% skeltonsnps$rsid) %>% merge(skeltonsnps, by= "rsid", how='inner') %>%
       mutate(ZZ = beta/se)  %>%
-      mutate(Z = ifelse(toupper(A1.x) == toupper(A1.y), ZZ * -1,ZZ)) %>% rename(FEATURE =rsid) %>%
+      mutate(Z = ifelse(toupper(A1.x) == toupper(A1.y), ZZ * -1,ZZ)) %>%
+      rename(FEATURE =rsid) %>%
       select("FEATURE","Z") %>%
       distinct(FEATURE, .keep_all= TRUE)
   list.df_pre[[df]] <-  list.df_pre[[df]] %>% action3()
   }else{
     action3 = . %>% drop_na(rsid) %>% subset(rsid %in% skeltonsnps$rsid) %>% merge(skeltonsnps, by= "rsid", how='inner') %>%
-      mutate(Z = ifelse(toupper(A1.x) == toupper(A1.y), Z * -1,Z)) %>%rename(FEATURE =rsid) %>%
+      rename(FEATURE =rsid) %>%
       select("FEATURE","Z") %>%
       distinct(FEATURE, .keep_all= TRUE)
     list.df_pre[[df]] <-  list.df_pre[[df]] %>% action3()
@@ -445,67 +447,17 @@ AA <- as.dist(1- A)
 res.hc1 <- hclust(d = AA,method = "mcquitty") #>>
 res.hc1 <- reorder(res.hc1, AA, method = "OLO")
 if(dentogram){
- fviz_dend(res.hc1, # Cut in four groups
-                           cex = 2, # label size
+  ## Finding optimal number of cluster using silhouette
+  silh <- fviz_nbclust(A, FUN = hcut, method = "silhouette",k.max=nrow(A)-1)
+  kcluster <- as.numeric(silh$data[which.max(silh$data$y),]$clusters)
+ fviz_dend(res.hc1, k = kcluster, # Cut in four groups
+                           cex = .6, # label size
                            k_colors = c("#2E9FDF", "#00AFBB", "#E7B800", "#FC4E07"),
                            color_labels_by_k = TRUE, # color labels by groups
                            rect = TRUE,
-                           main = "title"# Add rectangle around groups,
+                           main = "Dentogram iPheGWAS"# Add rectangle around groups,
   )
 }else{
   phenos[res.hc1$order]
 }
-}
-
-######################################### ######################################### #########################################
-############## FAST PROCESSPHEGWAS - THIS IS USED FOR PROCESISNG THE PHENOTYPE BEFORE THE LANDSCAPE FUNCTION
-######################################### ######################################### #########################################
-#' Prepare the dataframe to pass to landscape function
-#' @import GenomicSEM
-#' @param phenos Vector of names of dataframes that need to do iPheGWAS on.
-#' @param dentogram to show structural differences
-#' @return A processed dataframe to pass to PheGWAS landscape function
-#' @details Make sure there are no duplicate rsid's in any of the dataframe, If there aremake sure to resolve it before passing it to this function.
-#' @author George Gittu
-#' @examples
-#' \dontrun{
-#' phenos <- c("HDL", "LDL", "TRIGS", "TOTALCHOLESTROL")
-#' filennames <- c("HDL", "LDL", "TRIGS", "TOTALCHOLESTROL")
-#' hm3 = "/Users/ggeorge/Desktop/ldscR/w_hm3.snplist"
-#' ld = "/Users/ggeorge/Desktop/ldscR/MIX/eur_w_ld_chr"
-#' N = c(53293,46350,51710,143677)
-#' correlation.coeff <- ldscmod(phenos,filenames,N,hm3,ld)
-#' }
-#' @export
-ldscmod <- function(phenos,filenames,N,hm3,ld){
-  setwd(tempdir(check = TRUE))
-  print(getwd())
-  f <- list.files(getwd(), include.dirs = F, full.names = T, recursive = T)
-  file.remove(f)
-  for (i in 1:length(phenos)){
-    munge(files =filenames[i],hm3 = hm3,N =N[i],
-          trait.names =phenos[i])
-  }
-  filenames <- list.files(getwd(), pattern ="*.sumstats.gz", full.names=TRUE)
-  f <- path_file(filenames)
-  p <- sub('\\.sumstats.gz$', '', f)
-  mm <- capture.output(ldsc(traits =f,
-                            sample.prev = rep(NA, length(filenames)),
-                            population.prev = rep(NA, length(filenames)) ,ld = ld,wld = ld,trait.names =p))
-  preline<- grep("Genetic Correlation Results", mm, fixed = TRUE)
-  postline<- grep("LDSC finished running", mm, fixed = TRUE)
-  filedata <- mm[(preline+1):(postline-1)]
-  filedata <- gsub('^.*between\\s*|\\s*\\(.*$', '', filedata)
-  filedata <- sub( ":", "", filedata, fixed = TRUE)
-  filedata <- sub( " and", "", filedata, fixed = TRUE)
-  filedata_list<- strsplit(filedata, split = " ")
-  new <- Reduce(rbind, filedata_list)
-  names <- unique(c(new[,1], new[,2]))
-  corrmat <- matrix(nrow =length(names),  ncol = (length(names)), dimnames = list(names, names))
-  for (i in 1:length(filedata_list)){
-    corrmat[filedata_list[[i]][1],filedata_list[[i]][2]] <- as.numeric(filedata_list[[i]][3])
-    corrmat[filedata_list[[i]][2],filedata_list[[i]][1]] <- as.numeric(filedata_list[[i]][3])
-  }
-  diag(corrmat) <- 1
-  return(corrmat)
 }
