@@ -10,6 +10,8 @@ First of all, thanks to the community for using [PheGWAS](https://www.biorxiv.or
 
 In addition to the heuristic approach that we developed, all the functionalities outlined in the ***PheGWAS*** are also available in ***iphegwas*** package. Considering our community's request to improve the speed of PheGWAS, the entire codebase is rewritten, and you will notice that the ***iphegwas*** package is significantly faster than the ***PheGWAS*** package. 
 
+[Here](https://georgeg0.github.io/iphegwas/articles/iphegwas.html) is the website link to this package. Please check out the `Get Started` tab, and that will take you through how to use the package with automatically rendered examples. Please use chrome or firefox to generate the plots well.
+
 ## Installation:
 ### Prerequisites
 Please Install plotly, devtools and Biomart before installing the PheGWAS package.
