@@ -3,9 +3,8 @@ Type: Package
 Title: Fast version of PheGWAS
 Version: 0.2.0
 Author: George Gittu
-Maintainer: The package maintainer <george.gittu@gmail.com>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Maintainer: Gittu George <gittu.george@ubc.ca>
+Description: Intelligent PheGWAS
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
@@ -30,6 +29,8 @@ Imports:
 Remotes:
         MichelNivard/GenomicSEM
 Suggests: 
+    testthat (>= 3.0.0),
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+Config/testthat/edition: 3

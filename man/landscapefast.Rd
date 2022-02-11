@@ -55,17 +55,17 @@ Interactive 3-D association landscape for many phenotypes
 # Without iPheGWAS you get output in the order you pass phenos
 landscapefast(y,sliceval = 10,phenos =phenos)
 
-3D landscape visualization after applying iPheGWAS
+# 3D landscape visualization after applying iPheGWAS
 # Passing the order from the iPheGWAS function
 landscapefast(y,sliceval = 10,phenos = iphegwas(phenos))
 
-3D landscape visualization of chromosome number 19 (above a threshold of -log10 (p) 7.5)
+#3D landscape visualization of chromosome number 19 (above a threshold of -log10 (p) 7.5)
 landscapefast(y,sliceval = 7.5,chromosome = 19,phenos =phenos)
 
-3D landscape-viz of chromosome 19, gene view active(threshold > -log10(p) 7.5)
+# 3D landscape-viz of chromosome 19, gene view active(threshold > -log10(p) 7.5)
 landscape(y,sliceval = 7.5,chromosome = 19, geneview = TRUE,phenos =phenos)
 
-3D landscape-viz with calculate-LD and mutual-LD functionality active
+# 3D landscape-viz with calculate-LD and mutual-LD functionality active
 landscapefast(y, sliceval = 30, chromosome = 19,calculateLD= TRUE,mutualLD = TRUE,phenos =phenos)
 }
 }
