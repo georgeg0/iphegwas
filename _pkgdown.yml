@@ -1,0 +1,27 @@
+template:
+  params:
+    bootswatch: cosmo
+
+navbar:
+  right:
+    - text: "Source"
+      href: https://github.com/georgeg0/PheGWAS2
+reference:
+- title: External Functions
+  desc:  Build a complete site or one of its components.
+  contents:
+  - fastprocessphegwas
+  - landscapefast
+  - iphegwas
+
+- title: Available Datasets
+  contents:
+  - ibd
+  - hdl
+  - UlcerativeColitis
+  - Wasisthipratio
+  - bmi
+  - hdl
+  - ldl
+  - tchol
+  - trig
