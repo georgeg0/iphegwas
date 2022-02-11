@@ -59,7 +59,7 @@ fastprocessphegwas <- function(phenos,LDblock= FALSE,LDpop= "eur"){
     bpp = read.table(LDblock,header=TRUE,sep = "\t")
   }else if(LDpop == "asn"){
     print("Processing for AFR LDBlocks")
-    bpp = bppasn
+    bpp = bppafr
   }else if(LDpop == "afr"){
     print("Processing for ASN LDBlocks")
       bpp = bppasn

@@ -1,6 +1,6 @@
 Package: iphegwas
 Type: Package
-Title: Fast version of PheGWAS
+Title: Intelligent PheGWAS
 Version: 0.2.0
 Author: George Gittu
 Maintainer: Gittu George <gittu.george@ubc.ca>
@@ -27,8 +27,6 @@ Imports:
         factoextra (>= 1.0.7),
         cluster(>= 2.1.0),
         dplyr(>= 1.0.7)
-Remotes:
-        MichelNivard/GenomicSEM
 Suggests: 
     testthat (>= 3.0.0),
     knitr,
