@@ -8,6 +8,7 @@ Description: Intelligent PheGWAS
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
+LazyDataCompression:xz
 RoxygenNote: 7.1.1
 Depends: 
         R (>= 3.5.0)
