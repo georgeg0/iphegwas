@@ -5,7 +5,7 @@ template:
 navbar:
   right:
     - text: "Source"
-      href: https://github.com/georgeg0/PheGWAS2
+      href: https://github.com/georgeg0/iphegwas
 reference:
 - title: External Functions
   desc:  Build a complete site or one of its components.
