@@ -35,7 +35,6 @@ Here are the datasets that are available from iPheGWAS study2 within the package
 - Wasisthipratio
 - CrohnsDisease
 - UlcerativeColitis
-- height
 
 ```{r setup}
 library(iphegwas)
@@ -43,7 +42,7 @@ library(iphegwas)
 
 To run PheGWAS, pass the dataframe names available in your environment to fastprocessphegwas as vector of dataframe names.
 
-Before passing the dataframe makes sure your preprocess your GWAS summarystats dataframe to have columns named in this way
+Before passing the dataframe makes sure your preprocess your GWAS summarystats dataframe to have columns named in this way.
 
 ```
 CHR     BP       rsid A1 A2    beta     se P.value gene
@@ -63,7 +62,7 @@ CrohnsDisease <- CrohnsDisease
 UlcerativeColitis <- UlcerativeColitis
 ```
 
-The gene column is optional. There is an option to map genes to rsid if you want this, please set genemap = TRUE (By default it is set to FALSE). If TRUE it will take some time as it is using Gene BioMart Module to map genes internally.
+The gene column is optional. There is an option to map genes to rsid if you want this, please set `genemap = TRUE` (By default it is set to `FALSE`). If `TRUE` it will take some time as it is using Gene BioMart Module to map genes internally.
 
 ```{r}
 phenos <- c("ibd","bmi","CrohnsDisease","UlcerativeColitis","Wasisthipratio")
@@ -92,7 +91,7 @@ You can also run the iPheGWAS module independently to examine the dendrograms.
 iphegwas(phenos,dentogram = TRUE)
 ```
 
-All the functionalities outlined in the PheGWAS are also available in this package iphegwas, in addition to the heuristic approach that we developed. Considering performance in mind, the entire codebase is rewritten, and you will notice that the iphegwas package is faster than the PheGWAS package. Adding here the code from the PheGWAS vignette.
+In addition to the heuristic approach that we developed, all the functionalities outlined in the ***PheGWAS*** are also available in ***iphegwas*** package. Considering performance in mind, the entire codebase is rewritten, and you will notice that the iphegwas package is faster than the PheGWAS package. Adding here the code from the PheGWAS vignette.
 
 Following processed summary data are from the lipid consortium:
 
