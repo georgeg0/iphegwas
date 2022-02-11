@@ -190,7 +190,8 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
     if(length(grep("gene", colnames(d))) == 0 & genemap == TRUE){
       print("Applying BioMArt module for matching gene to rsid")
       gwasmultifull <- addgene(gwasmultifull)
-    }else{
+    }
+    if(length(grep("gene", colnames(d))) == 0){
       gwasmultifull$gene <- NA
     }
     gwasmultifull <- gwasmultifull[!is.na(gwasmultifull$CHR) & !is.na(gwasmultifull$BP),]
@@ -236,11 +237,12 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
         group_by(lab, PHENO) %>%
         slice(which.max(logp))
 
-      if(length(grep("gene", colnames(d))) == 0){
+      if(length(grep("gene", colnames(d))) == 0 & genemap == TRUE){
         print("Applying BioMArt module for matching gene to rsid")
         gwasmulti <- addgene(gwasmulti)
-      }else{
-        gwasmulti$gene <- NA
+      }
+      if(length(grep("gene", colnames(d))) == 0){
+        gwasmultifull$gene <- NA
       }
 
       ###rewriting calculating ld logic
