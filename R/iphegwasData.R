@@ -266,31 +266,6 @@
 #'
 "bmi"
 
-#' height GWAS summary dataset
-#'
-#' The dataset 'height' is a data.frame object with the summary results of a GWAS analysis.
-#'
-#' @docType data
-#'
-#' @usage data(height)
-#'
-#' @format A dataframe with simulated GWAS results (simulated using plink 1.9)
-#' \itemize{
-#'   \item CHR is the chromosome number
-#'   \item BP is the position of the chromosome
-#'   \item rsid The SNP ID associated with that position and chromsome
-#'   \item A1
-#'   \item A2
-#'   \item beta is the p_value of the trait
-#'   \item se
-#'   \item P.value is the p_value of the trait
-#' }
-#'
-#' @keywords datasets
-#' @return A data frame
-#'
-"height"
-
 #' CrohnsDisease GWAS summary dataset
 #'
 #' The dataset 'CrohnsDisease' is a data.frame object with the summary results of a GWAS analysis.

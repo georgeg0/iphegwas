@@ -27,18 +27,21 @@ addgene <- function(gwasmulti){
 #' @import tidyr
 #' @importFrom data.table setDT
 #' @param phenos Vector of names of dataframes that need to do PheGWAS on. Arrange the dataframe in the order how the the phenotypes should align in y axis
+#' @param LDpop Process using LD Block data summarized in T Berisa et.al paper 2016, Default eur. Available asn & afn
 #' @param LDblock If want to pass a custom LDblock file for division of BP groups (applicable only for chromosomal level)
 #' @return A processed dataframe to pass to PheGWAS landscape function
-#' @details Make sure there are no duplicate rsid's in any of the dataframe, If there aremake sure to resolve it before passing it to this function.
+#' @details Make sure there are no duplicate rsid's in any of the dataframe, If there make sure to resolve it before passing it to this function.
 #' @author George Gittu
 #' @examples
+#' \dontrun{
 #' HDL <- hdl
-#' LDL <- ldl)
+#' LDL <- ldl
 #' TRIGS <- trig
 #' TOTALCHOLESTROL <- tchol
 #' phenos <- c("HDL", "LDL", "TRIGS", "TOTALCHOLESTROL")
 #' ## y is ready to be passed to function landscape
 #' y <- fastprocessphegwas(phenos)
+#' }
 #' @export
 fastprocessphegwas <- function(phenos,LDblock= FALSE,LDpop= "eur"){
   if(is.vector(phenos) & !is.list(phenos)) {
@@ -130,7 +133,7 @@ fastprocessphegwas <- function(phenos,LDblock= FALSE,LDpop= "eur"){
 #' @import tidyverse
 #' @import tidyr
 #' @import plotly
-#' @import reshape2
+#' @importFrom reshape2 acast
 #' @importFrom biomaRt useMart getBM
 #' @importFrom httr GET stop_for_status content_type content
 #' @importFrom utils read.table
@@ -140,8 +143,8 @@ fastprocessphegwas <- function(phenos,LDblock= FALSE,LDpop= "eur"){
 #' @param d DataFrame output from processphegwas
 #' @param sliceval Integer to indicate value of -log10(p) to do the sectionalcut. Usually value > -log10 6 is considered to be significant
 #' @param chromosome Integer to indicate the chromosome number thats interested, If not given entire chromosome is given
+#' @param genemap if true it map SNP's to gene. This takes time as its using BioMart package to map genes.
 #' @param geneview This checks for the common genes across the section
-#' @param LDblock If want to pass a custom LDblock file for division of BP groups (applicable only for chromosomal level)
 #' @param calculateLD This shoudld be set to true if the calcualte LD logic needed to be added to the plot
 #' @param pop The population to select for calculation the LD (default GB)
 #' @param R2 The value to set to calculate LD
@@ -152,23 +155,25 @@ fastprocessphegwas <- function(phenos,LDblock= FALSE,LDpop= "eur"){
 #' chromosome view the max peak is selected
 #' @author George Gittu
 #' @examples
-# \dontrun{
-#'
-#' 3D landscape visualization of all the phenotypes across the base pair positions(above a threshold of -log10 (p) 6)
+#' \dontrun{
+#' # here y is output from function fastprocessphegwas
+#' # 3D landscape-viz of all the phenos across the base pair positions(threshold > -log10(p) 7.5)
+#' # Without iPheGWAS you get output in the order you pass phenos
 #' landscapefast(y,sliceval = 10,phenos =phenos)
 #'
-#' #' 3D landscape visualization after applying iPheGWAS
+#' 3D landscape visualization after applying iPheGWAS
+#' # Passing the order from the iPheGWAS function
 #' landscapefast(y,sliceval = 10,phenos = iphegwas(phenos))
 #'
-#' 3D landscape visualization of chromosome number 19 (above a threshold of -log10 (p) 10)
+#' 3D landscape visualization of chromosome number 19 (above a threshold of -log10 (p) 7.5)
 #' landscapefast(y,sliceval = 7.5,chromosome = 19,phenos =phenos)
 #'
-#' 3D landscape visualization of chromosome number 19, gene view active  (above a threshold of -log10 (p) 10)
+#' 3D landscape-viz of chromosome 19, gene view active(threshold > -log10(p) 7.5)
 #' landscape(y,sliceval = 7.5,chromosome = 19, geneview = TRUE,phenos =phenos)
 #'
-#' 3D visualization with LD block (for european population) passing externally, parameter to pass LD and also calculate the mutualLD block
+#' 3D landscape-viz with calculate-LD and mutual-LD functionality active
 #' landscapefast(y, sliceval = 30, chromosome = 19,calculateLD= TRUE,mutualLD = TRUE,phenos =phenos)
-#}
+#'}
 #' @export
 landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.75,
                           D = 0.75,calculateLD = FALSE, mutualLD = FALSE,phenos,genemap= FALSE,geneview = FALSE,levelsdown = 0){
@@ -185,6 +190,8 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
     if(length(grep("gene", colnames(d))) == 0 & genemap == TRUE){
       print("Applying BioMArt module for matching gene to rsid")
       gwasmultifull <- addgene(gwasmultifull)
+    }else{
+      gwasmultifull$gene <- NA
     }
     gwasmultifull <- gwasmultifull[!is.na(gwasmultifull$CHR) & !is.na(gwasmultifull$BP),]
     ## Selecting only chr 1 to 22 ignoring X and Y, phenos is the order that we wannt the traits to be ordered
@@ -232,6 +239,8 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
       if(length(grep("gene", colnames(d))) == 0){
         print("Applying BioMArt module for matching gene to rsid")
         gwasmulti <- addgene(gwasmulti)
+      }else{
+        gwasmulti$gene <- NA
       }
 
       ###rewriting calculating ld logic
@@ -401,11 +410,10 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
 #'
 #' @import tidyverse
 #' @import tidyr
-#' @import reshape2
+#' @importFrom reshape2 acast
 #' @import factoextra
 #' @import cluster
 #' @import seriation
-#' @import data.table
 #' @importFrom data.table fread rbindlist
 #' @param phenos Vector of names of dataframes that need to do iPheGWAS on.
 #' @param dentogram to show structural differences
