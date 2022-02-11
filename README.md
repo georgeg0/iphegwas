@@ -30,7 +30,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("biomaRt")
 ```
-## Installation of PheGWAS package
+## Installation of iphegwas package
 ```
 install_github("georgeg0/iphegwas")
 ```
