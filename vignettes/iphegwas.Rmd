@@ -28,10 +28,16 @@ This package is packaged with datasets used in PheGWAS and some datasets to demo
 Here are the datasets that are available from iPheGWAS study2 within the package.
 
 - ibd
-- bmi
 - Wasisthipratio
 - CrohnsDisease
 - UlcerativeColitis
+- bmi
+- hdl
+- ldl
+- tchol
+- bmi
+
+
 
 ```{r setup}
 library(iphegwas)
@@ -89,10 +95,11 @@ iphegwas(phenos,dentogram = TRUE)
 ```
 
 We also have an LDSC module to calculate; (We use LDSC python modules https://github.com/bulik/ldsc for this - thanks to LDSC team)
-* Ordered traits based on the LDSC
-* Genetic correlation plot
-* Dendrogram based on LDSC
-* You also get a `correlationmatrix` in your global environment that you can use later. If `correlationmatrix` exist in your global environment then `ldscmod` won't recalculate the rg, but you can use `ldscmod` with `dentogram = TRUE` and `plot = TRUE`.
+
+- Ordered traits based on the LDSC
+- Genetic correlation plot
+- Dendrogram based on LDSC
+- You also get a `correlationmatrix` in your global environment that you can use later. If `correlationmatrix` exist in your global environment then `ldscmod` won't recalculate the rg, but you can use `ldscmod` with `dentogram = TRUE` and `plot = TRUE`.
 
 You need to pass the `pathname` and `ldscpath`. The path name is the absolute path to the folder containing the summary statistics for which you want to find the genetic correlation. You must have the summary statistics in this folder, or else you will get an error. All the additional files that ldsc generates will also be put into the location `pathname` for later reference if you are interested in looking at those files for additional information that LDSC provides.
 
