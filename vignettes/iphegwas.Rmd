@@ -17,6 +17,7 @@ vignette: "%\\VignetteIndexEntry{iphegwas} %\\VignetteEncoding{UTF-8} %\\Vignett
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
+  warning = FALSE,
   collapse = TRUE,
   comment = "#>",fig.width=12, fig.height=9, message=FALSE, tidy=TRUE, dpi=75)
 ```

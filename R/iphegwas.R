@@ -103,16 +103,16 @@ fastprocessphegwas <- function(phenos,LDblock= FALSE,LDpop= "eur"){
   if(length(grep("gene", colnames(list.df_pre[[1]]))) == 0){
   gwasmulti.melt <- gwasmulti.meltF %>% separate(Entire_Val, c("BP", "SNP","A1","A2","BETA","SE","P"), "and")
   ## Getting the dataframe that can be used
-  d <- data.frame(CHR = as.numeric(gwasmulti.melt$CHR), BP = as.numeric(gwasmulti.melt$BP),A1 =gwasmulti.melt$A1,A2 =gwasmulti.melt$A2,SNP =gwasmulti.melt$SNP,
+  suppressWarnings({d <- data.frame(CHR = as.numeric(gwasmulti.melt$CHR), BP = as.numeric(gwasmulti.melt$BP),A1 =gwasmulti.melt$A1,A2 =gwasmulti.melt$A2,SNP =gwasmulti.melt$SNP,
                   P = as.numeric(gwasmulti.melt$P),BETA = as.numeric(gwasmulti.melt$BETA),SE = as.numeric(gwasmulti.melt$SE),
-                  PHENO = gwasmulti.melt$color,label = gwasmulti.melt$label)
+                  PHENO = gwasmulti.melt$color,label = gwasmulti.melt$label)})
 
   }else{
   gwasmulti.melt <- gwasmulti.meltF %>% separate(Entire_Val, c("BP", "SNP","A1","A2","BETA","SE","P","gene"), "and")
   ## Getting the dataframe that can be used
-  suppressWarnings(d <- data.frame(CHR = as.numeric(gwasmulti.melt$CHR), BP = as.numeric(gwasmulti.melt$BP),A1 =gwasmulti.melt$A1,A2 =gwasmulti.melt$A2,SNP =gwasmulti.melt$SNP,
+  suppressWarnings({d <- data.frame(CHR = as.numeric(gwasmulti.melt$CHR), BP = as.numeric(gwasmulti.melt$BP),A1 =gwasmulti.melt$A1,A2 =gwasmulti.melt$A2,SNP =gwasmulti.melt$SNP,
                   P = as.numeric(gwasmulti.melt$P),BETA = as.numeric(gwasmulti.melt$BETA),SE = as.numeric(gwasmulti.melt$SE),gene = gwasmulti.melt$gene,
-                  PHENO = gwasmulti.melt$color,label = gwasmulti.melt$label))
+                  PHENO = gwasmulti.melt$color,label = gwasmulti.melt$label)})
   }
   d <- subset(d, (is.numeric(CHR) & is.numeric(BP) & is.numeric(P) ))
   d <- d[order(d$CHR, d$BP), ]
@@ -538,7 +538,7 @@ ldscmod <- function(pathname,ldscpath, dentogram = FALSE, plot = FALSE){
     i = 0
     while( i < length(files_sumstats) ){
       rg_val <- stringr::str_flatten(files_sumstats,collapse = ",")
-      print(glue::glue("Processing for {files_sumstats[1]}"))
+      # print(glue::glue("Processing for {files_sumstats[1]}"))
       command <- glue::glue(
         "{ldscpath}/ldsc.py ",
         "--rg {rg_val} ",
@@ -585,10 +585,10 @@ ldscmod <- function(pathname,ldscpath, dentogram = FALSE, plot = FALSE){
   if(plot){
     col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
     col <- colorRampPalette(c( "#4477AA", "#77AADD", "#FFFFFF","#EE9988" ,"#BB4444"))
-    return(corrplot(as.matrix(correlationmatrix), method="circle", col=col(200),
+    return(suppressWarnings({corrplot(as.matrix(correlationmatrix), method="circle", col=col(200),
                      addCoef.col = "black", # Add coefficient of correlation
                      tl.col="black", tl.srt=45, #Text label color and rotation
-                     is.corr = FALSE))
+                     is.corr = FALSE)}))
   }
   B <- abs(correlationmatrix)
   BB <- as.dist(1- B)
