@@ -160,7 +160,7 @@
 #'   \item A1 is allele2
 #' }
 #'
-#' @keywords datasets
+#' @keywords internal
 #' @return A data frame
 #'
 "skeltonsnps"

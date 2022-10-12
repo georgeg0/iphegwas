@@ -474,13 +474,13 @@ if(dentogram){
   ## Finding optimal number of cluster using silhouette
   silh <- fviz_nbclust(A, FUN = hcut, method = "silhouette",k.max=nrow(A)-1)
   kcluster <- as.numeric(silh$data[which.max(silh$data$y),]$clusters)
- fviz_dend(res.hc1, k = kcluster, # Cut in four groups
+  suppressWarnings({fviz_dend(res.hc1, k = kcluster, # Cut in four groups
                            cex = .6, # label size
                            k_colors = c("#2E9FDF", "#00AFBB", "#E7B800", "#FC4E07"),
                            color_labels_by_k = TRUE, # color labels by groups
                            rect = TRUE,
                            main = "Dentogram iPheGWAS"# Add rectangle around groups,
-  )
+  )})
 }else{
   phenos[res.hc1$order]
 }
@@ -527,7 +527,8 @@ ldscmod <- function(pathname,ldscpath, dentogram = FALSE, plot = FALSE){
       "--merge-alleles {hm3}",
     )
     # assumption user use ldsc conda env
-    system(paste("source ~/.zshrc && conda activate ldsc && ",command),intern=TRUE)
+    system(paste("source ~/.zshrc && conda activate ldsc && ",command),intern=TRUE,
+           ignore.stderr = TRUE,ignore.stdout = TRUE)
     paste0("Munged ",path_file(pathname))
   }
 
