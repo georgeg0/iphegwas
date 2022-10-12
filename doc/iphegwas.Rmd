@@ -28,7 +28,7 @@ iPheGWAS module is developed to bring intelligence into PheGWAS by incorporating
 
 This package is packaged with datasets used in PheGWAS and some datasets to demonstrate iPheGWAS. If you are looking for the entire data used for studies 1 and 2 in iPheGWAS, please download it from [here](https://drive.google.com/drive/folders/1975iMOimOQ1GyzxpIBYLG41tXnBOG03y?usp=sharing). Checkout the individual datasets [here](https://drive.google.com/drive/folders/1_tCKT8yOtMsjkc_O8G0AQoEFA2HqX-gp?usp=sharing).
 
-Here are the datasets that are available from iPheGWAS study2 within the package.
+Here are the data sets that are available from iPheGWAS study2 within the package.
 
 - ibd
 - bmi
