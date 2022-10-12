@@ -29,7 +29,8 @@ Imports:
         dplyr(>= 1.0.7),
         fs,
         stringr,
-        corrplot
+        corrplot,
+        purrr
 Suggests: 
     testthat (>= 3.0.0),
     knitr,
