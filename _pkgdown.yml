@@ -13,15 +13,20 @@ reference:
   - fastprocessphegwas
   - landscapefast
   - iphegwas
+  - ldscmod
 
 - title: Available Datasets
   contents:
   - ibd
-  - hdl
   - UlcerativeColitis
   - Wasisthipratio
+  - CrohnsDisease
   - bmi
+  - hdl
   - hdl
   - ldl
   - tchol
   - trig
+  - bppafr
+  - bppasn
+  - bppeur
