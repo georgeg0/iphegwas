@@ -138,7 +138,7 @@ fastprocessphegwas <- function(phenos,LDblock= FALSE,LDpop= "eur"){
 #' @importFrom httr GET stop_for_status content_type content
 #' @importFrom utils read.table
 #' @import xml2
-#' @import jsonlite
+#' @rawNamespace import(jsonlite, except = flatten)
 #' @importFrom stringr str_trim
 #' @param d DataFrame output from processphegwas
 #' @param sliceval Integer to indicate value of -log10(p) to do the sectionalcut. Usually value > -log10 6 is considered to be significant
