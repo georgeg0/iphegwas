@@ -30,7 +30,8 @@ Imports:
         fs,
         stringr,
         corrplot,
-        purrr
+        purrr,
+        glue
 Suggests: 
     testthat (>= 3.0.0),
     knitr,

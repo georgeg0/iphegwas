@@ -10,6 +10,8 @@ iphegwas(phenos, dentogram = FALSE, pathname = FALSE)
 \item{phenos}{Vector of names of dataframes that need to do iPheGWAS on.}
 
 \item{dentogram}{to show structural differences}
+
+\item{pathname}{To read summarystats from a folder instead of passing it as phenos}
 }
 \value{
 A processed dataframe to pass to PheGWAS landscape function/ dentogram if it's TRUE
@@ -27,6 +29,9 @@ phenos <- c("HDL", "LDL", "TRIGS", "TOTALCHOLESTROL")
 iphegwas(phenos)
 ## This gives the dentogram as output
 iphegwas(phenos,dentogram = TRUE)
+## Give folder path
+pathname <- system.file("extdata", "samplesummary", package = "iphegwas")
+iphegwas(pathname = pathname,dentogram = TRUE)
 }
 }
 \author{

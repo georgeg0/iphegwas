@@ -434,6 +434,9 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
 #' iphegwas(phenos)
 #' ## This gives the dentogram as output
 #' iphegwas(phenos,dentogram = TRUE)
+#' ## Give folder path
+#' pathname <- system.file("extdata", "samplesummary", package = "iphegwas")
+#' iphegwas(pathname = pathname,dentogram = TRUE)
 #' }
 #' @export
 iphegwas <- function(phenos,dentogram = FALSE,pathname = FALSE){
