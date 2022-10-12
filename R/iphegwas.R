@@ -110,9 +110,9 @@ fastprocessphegwas <- function(phenos,LDblock= FALSE,LDpop= "eur"){
   }else{
   gwasmulti.melt <- gwasmulti.meltF %>% separate(Entire_Val, c("BP", "SNP","A1","A2","BETA","SE","P","gene"), "and")
   ## Getting the dataframe that can be used
-  d <- data.frame(CHR = as.numeric(gwasmulti.melt$CHR), BP = as.numeric(gwasmulti.melt$BP),A1 =gwasmulti.melt$A1,A2 =gwasmulti.melt$A2,SNP =gwasmulti.melt$SNP,
+  suppressWarnings(d <- data.frame(CHR = as.numeric(gwasmulti.melt$CHR), BP = as.numeric(gwasmulti.melt$BP),A1 =gwasmulti.melt$A1,A2 =gwasmulti.melt$A2,SNP =gwasmulti.melt$SNP,
                   P = as.numeric(gwasmulti.melt$P),BETA = as.numeric(gwasmulti.melt$BETA),SE = as.numeric(gwasmulti.melt$SE),gene = gwasmulti.melt$gene,
-                  PHENO = gwasmulti.melt$color,label = gwasmulti.melt$label)
+                  PHENO = gwasmulti.melt$color,label = gwasmulti.melt$label))
   }
   d <- subset(d, (is.numeric(CHR) & is.numeric(BP) & is.numeric(P) ))
   d <- d[order(d$CHR, d$BP), ]
