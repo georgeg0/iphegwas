@@ -416,6 +416,9 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
 #' @import factoextra
 #' @import cluster
 #' @import seriation
+#' @import stringr
+#' @import purrr
+#' @import fs
 #' @importFrom data.table fread rbindlist
 #' @param phenos Vector of names of dataframes that need to do iPheGWAS on.
 #' @param dentogram to show structural differences
@@ -431,8 +434,14 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
 #' iphegwas(phenos,dentogram = TRUE)
 #' }
 #' @export
-iphegwas <- function(phenos,dentogram = FALSE){
+iphegwas <- function(phenos,dentogram = FALSE,pathname = FALSE){
+if(pathname != FALSE){
+  files <- fs::dir_ls(pathname)
+  list.df_pre <- purrr::map(files,fread)
+  phenos <- names(list.df_pre) <- str_extract(path_file(files),"[^.]+")
+}else{
 list.df_pre = mget(phenos,envir = .GlobalEnv)
+}
 for (df in 1:length(list.df_pre)){
   if(length(grep("Z", colnames( list.df_pre[[df]]))) == 0){
     action3 = . %>% subset(rsid %in% skeltonsnps$rsid) %>% merge(skeltonsnps, by= "rsid", how='inner') %>%
@@ -483,6 +492,9 @@ if(dentogram){
 #' @import factoextra
 #' @import cluster
 #' @import seriation
+#' @import fs
+#' @import stringr
+#' @import corrplot
 #' @param pathname The folder that contains the summary stats to use for LDSC
 #' @param ldscpath Path to the LDSC GitHub folder in your computer
 #' @param dentogram If TRUE returns dentogram using LDSC method
@@ -502,6 +514,7 @@ if(dentogram){
 #' ldscmod(pathname,ldscpath,dentogram = TRUE)
 #' ldscmod(pathname,ldscpath,plot = TRUE)
 #' }
+#' @export
 ldscmod <- function(pathname,ldscpath, dentogram = FALSE, plot = FALSE){
   if(!exists("correlationmatrix")){
   munge_summary <- function(pathfile,ldscpath){
@@ -514,7 +527,7 @@ ldscmod <- function(pathname,ldscpath, dentogram = FALSE, plot = FALSE){
       "--merge-alleles {hm3}",
     )
     # assumption user use ldsc conda env
-    system(paste("source ~/.zshrc && conda activate ldsc && ",command))
+    system(paste("source ~/.zshrc && conda activate ldsc && ",command),intern=TRUE)
     paste0("Munged ",path_file(pathname))
   }
 
@@ -523,7 +536,7 @@ ldscmod <- function(pathname,ldscpath, dentogram = FALSE, plot = FALSE){
     ld <- system.file("extdata", "eur_w_ld_chr", package = "iphegwas")
     i = 0
     while( i < length(files_sumstats) ){
-      rg_val <- str_flatten(files_sumstats,collapse = ",")
+      rg_val <- stringr::str_flatten(files_sumstats,collapse = ",")
       print(glue::glue("Processing for {files_sumstats[1]}"))
       command <- glue::glue(
         "{ldscpath}/ldsc.py ",
@@ -535,7 +548,8 @@ ldscmod <- function(pathname,ldscpath, dentogram = FALSE, plot = FALSE){
       files_sumstats <- c(files_sumstats[-1],files_sumstats[1])
       i = i + 1
       # assumption user use ldsc conda env
-      system(paste("source ~/.zshrc && conda activate ldsc && ",command))
+      system(paste("source ~/.zshrc && conda activate ldsc && ",command),intern=TRUE,
+             ignore.stderr = TRUE,ignore.stdout = TRUE)
     }
   }
 
@@ -551,7 +565,7 @@ ldscmod <- function(pathname,ldscpath, dentogram = FALSE, plot = FALSE){
     rg <- as.numeric(map_chr(selected_names, 3))
     phenosrow <- purrr::map_chr(purrr::map_chr(selected_names, 1),~str_replace(path_file(.),".tsv.sumstats.gz",""))
     phenoscol <- purrr::map_chr(purrr::map_chr(selected_names, 2),~str_replace(path_file(.),".tsv.sumstats.gz",""))
-    correlationmatrix_iphe[unique(phenosrow),phenoscol] <<- rg
+    correlationmatrix[unique(phenosrow),phenoscol] <<- rg
     diag(correlationmatrix) <<- 1
     .GlobalEnv$correlationmatrix <- correlationmatrix
     correlationmatrix

@@ -8,8 +8,8 @@ Description: Intelligent PheGWAS
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
-LazyDataCompression:xz
-RoxygenNote: 7.1.1
+LazyDataCompression: xz
+RoxygenNote: 7.2.1
 Depends: 
         R (>= 3.5.0)
 Imports:
@@ -26,7 +26,10 @@ Imports:
         seriation (>= 1.2-9),
         factoextra (>= 1.0.7),
         cluster(>= 2.1.0),
-        dplyr(>= 1.0.7)
+        dplyr(>= 1.0.7),
+        fs,
+        stringr,
+        corrplot
 Suggests: 
     testthat (>= 3.0.0),
     knitr,
