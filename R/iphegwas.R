@@ -419,9 +419,11 @@ landscapefast <- function(d,sliceval = 7,chromosome = FALSE,pop = "GBR",R2 = 0.7
 #' @import stringr
 #' @import purrr
 #' @import fs
+#' @import dplyr
 #' @importFrom data.table fread rbindlist
 #' @param phenos Vector of names of dataframes that need to do iPheGWAS on.
 #' @param dentogram to show structural differences
+#' @param pathname To read summarystats from a folder instead of passing it as phenos
 #' @return A processed dataframe to pass to PheGWAS landscape function/ dentogram if it's TRUE
 #' @details Make sure there are no duplicate rsid's in any of the dataframe, If there aremake sure to resolve it before passing it to this function.
 #' @author George Gittu
@@ -495,6 +497,8 @@ if(dentogram){
 #' @import fs
 #' @import stringr
 #' @import corrplot
+#' @import dplyr
+#' @import glue
 #' @param pathname The folder that contains the summary stats to use for LDSC
 #' @param ldscpath Path to the LDSC GitHub folder in your computer
 #' @param dentogram If TRUE returns dentogram using LDSC method
