@@ -21,4 +21,4 @@ A data frame
 \description{
 Skeleton SNP's for ipheGWAS
 }
-\keyword{datasets}
+\keyword{internal}

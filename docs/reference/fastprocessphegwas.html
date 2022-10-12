@@ -50,21 +50,28 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">fastprocessphegwas</span><span class="op">(</span><span class="va">phenos</span>, LDblock <span class="op">=</span> <span class="cn">FALSE</span>, LDpop <span class="op">=</span> <span class="st">"eur"</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fastprocessphegwas</span><span class="op">(</span><span class="va">phenos</span>, LDblock <span class="op">=</span> <span class="cn">FALSE</span>, LDpop <span class="op">=</span> <span class="st">"eur"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>phenos</dt>
 <dd><p>Vector of names of dataframes that need to do PheGWAS on. Arrange the dataframe in the order how the the phenotypes should align in y axis</p></dd>
+
+
 <dt>LDblock</dt>
 <dd><p>If want to pass a custom LDblock file for division of BP groups (applicable only for chromosomal level)</p></dd>
+
+
 <dt>LDpop</dt>
 <dd><p>Process using LD Block data summarized in T Berisa et.al paper 2016, Default eur. Available asn &amp; afn</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A processed dataframe to pass to PheGWAS landscape function</p>
+    
+
+<p>A processed dataframe to pass to PheGWAS landscape function</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -77,15 +84,15 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">HDL</span> <span class="op">&lt;-</span> <span class="va">hdl</span></span>
-<span class="r-in"><span class="va">LDL</span> <span class="op">&lt;-</span> <span class="va">ldl</span></span>
-<span class="r-in"><span class="va">TRIGS</span> <span class="op">&lt;-</span> <span class="va">trig</span></span>
-<span class="r-in"><span class="va">TOTALCHOLESTROL</span> <span class="op">&lt;-</span> <span class="va">tchol</span></span>
-<span class="r-in"><span class="va">phenos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"HDL"</span>, <span class="st">"LDL"</span>, <span class="st">"TRIGS"</span>, <span class="st">"TOTALCHOLESTROL"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## y is ready to be passed to function landscape</span></span>
-<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">fastprocessphegwas</span><span class="op">(</span><span class="va">phenos</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">HDL</span> <span class="op">&lt;-</span> <span class="va">hdl</span></span></span>
+<span class="r-in"><span><span class="va">LDL</span> <span class="op">&lt;-</span> <span class="va">ldl</span></span></span>
+<span class="r-in"><span><span class="va">TRIGS</span> <span class="op">&lt;-</span> <span class="va">trig</span></span></span>
+<span class="r-in"><span><span class="va">TOTALCHOLESTROL</span> <span class="op">&lt;-</span> <span class="va">tchol</span></span></span>
+<span class="r-in"><span><span class="va">phenos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"HDL"</span>, <span class="st">"LDL"</span>, <span class="st">"TRIGS"</span>, <span class="st">"TOTALCHOLESTROL"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## y is ready to be passed to function landscape</span></span></span>
+<span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">fastprocessphegwas</span><span class="op">(</span><span class="va">phenos</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -100,7 +107,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

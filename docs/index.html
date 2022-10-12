@@ -69,27 +69,28 @@
 
 <p>First of all, thanks to the community for using <a href="https://www.biorxiv.org/content/10.1101/694794v2.article-info" class="external-link">PheGWAS</a>. Since it’s release we have been working on a heuristic approach to give quick insights into the genetic relatedness for phenotypes using GWAS summary statistics file. We are adding this module to PheGWAS and reintroducing it as iPheGWAS (Intelligent PheGWAS). The traits in your landscape are no more ordered as random but will be ordered based on their genetic correlations.</p>
 <p>In addition to the heuristic approach that we developed, all the functionalities outlined in the <strong><em>PheGWAS</em></strong> are also available in <strong><em>iphegwas</em></strong> package. Considering our community’s request to improve the speed of PheGWAS, the entire codebase is rewritten, and you will notice that the <strong><em>iphegwas</em></strong> package is significantly faster than the <strong><em>PheGWAS</em></strong> package.</p>
+<p><a href="https://georgeg0.github.io/iphegwas/index.html" class="external-link">Here</a> is the website link to this package. Please check out the <code>Get Started</code> tab, and that will take you through how to use the package with automatically rendered examples. Please use chrome or firefox to generate the plots well.</p>
 <div class="section level2">
 <h2 id="installation">Installation:<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <div class="section level3">
 <h3 id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a>
 </h3>
-<p>Please Install plotly, devtools and Biomart before installing the PheGWAS package.</p>
+<p>Please Install plotly, devtools and Biomart before installing the iphegwas package.</p>
 <p>Install plotly</p>
-<pre><code><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"plotly"</span><span class="op">)</span></code></pre>
+<pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"plotly"</span><span class="op">)</span></span></code></pre>
 <p>Install devtools</p>
-<pre><code><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></code></pre>
+<pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span></code></pre>
 <p>Install BioMart</p>
-<pre><code><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>
-<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"biomaRt"</span><span class="op">)</span></code></pre>
+<pre><code><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"biomaRt"</span><span class="op">)</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
 <h2 id="installation-of-iphegwas-package">Installation of iphegwas package<a class="anchor" aria-label="anchor" href="#installation-of-iphegwas-package"></a>
 </h2>
-<pre><code><span class="fu">install_github</span><span class="op">(</span><span class="st">"georgeg0/iphegwas"</span><span class="op">)</span></code></pre>
+<pre><code><span><span class="fu">install_github</span><span class="op">(</span><span class="st">"georgeg0/iphegwas"</span><span class="op">)</span></span></code></pre>
 </div>
 </div>
   </div>
@@ -136,7 +137,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

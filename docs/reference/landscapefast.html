@@ -50,49 +50,72 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">landscapefast</span><span class="op">(</span>
-  <span class="va">d</span>,
-  sliceval <span class="op">=</span> <span class="fl">7</span>,
-  chromosome <span class="op">=</span> <span class="cn">FALSE</span>,
-  pop <span class="op">=</span> <span class="st">"GBR"</span>,
-  R2 <span class="op">=</span> <span class="fl">0.75</span>,
-  D <span class="op">=</span> <span class="fl">0.75</span>,
-  calculateLD <span class="op">=</span> <span class="cn">FALSE</span>,
-  mutualLD <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">phenos</span>,
-  genemap <span class="op">=</span> <span class="cn">FALSE</span>,
-  geneview <span class="op">=</span> <span class="cn">FALSE</span>,
-  levelsdown <span class="op">=</span> <span class="fl">0</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">landscapefast</span><span class="op">(</span></span>
+<span>  <span class="va">d</span>,</span>
+<span>  sliceval <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>  chromosome <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  pop <span class="op">=</span> <span class="st">"GBR"</span>,</span>
+<span>  R2 <span class="op">=</span> <span class="fl">0.75</span>,</span>
+<span>  D <span class="op">=</span> <span class="fl">0.75</span>,</span>
+<span>  calculateLD <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  mutualLD <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">phenos</span>,</span>
+<span>  genemap <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  geneview <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  levelsdown <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>d</dt>
 <dd><p>DataFrame output from processphegwas</p></dd>
+
+
 <dt>sliceval</dt>
 <dd><p>Integer to indicate value of -log10(p) to do the sectionalcut. Usually value &gt; -log10 6 is considered to be significant</p></dd>
+
+
 <dt>chromosome</dt>
 <dd><p>Integer to indicate the chromosome number thats interested, If not given entire chromosome is given</p></dd>
+
+
 <dt>pop</dt>
 <dd><p>The population to select for calculation the LD (default GB)</p></dd>
+
+
 <dt>R2</dt>
 <dd><p>The value to set to calculate LD</p></dd>
+
+
 <dt>D</dt>
 <dd><p>THe value to set to calcualte LD</p></dd>
+
+
 <dt>calculateLD</dt>
 <dd><p>This shoudld be set to true if the calcualte LD logic needed to be added to the plot</p></dd>
+
+
 <dt>mutualLD</dt>
 <dd><p>Calcualte the mutual LD SNP between the phenotypes</p></dd>
+
+
 <dt>phenos</dt>
 <dd><p>Vector of names of dataframes that need to do PheGWAS on. Arrange the dataframe in the order how the the phenotypes should align in y axis
 chromosome view the max peak is selected</p></dd>
+
+
 <dt>genemap</dt>
 <dd><p>if true it map SNP's to gene. This takes time as its using BioMart package to map genes.</p></dd>
+
+
 <dt>geneview</dt>
 <dd><p>This checks for the common genes across the section</p></dd>
+
+
 <dt>levelsdown</dt>
 <dd><p>Used to find the independant signals</p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -101,25 +124,25 @@ chromosome view the max peak is selected</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># here y is output from function fastprocessphegwas</span></span>
-<span class="r-in"><span class="co"># 3D landscape-viz of all the phenos across the base pair positions(threshold &gt; -log10(p) 7.5)</span></span>
-<span class="r-in"><span class="co"># Without iPheGWAS you get output in the order you pass phenos</span></span>
-<span class="r-in"><span class="fu">landscapefast</span><span class="op">(</span><span class="va">y</span>,sliceval <span class="op">=</span> <span class="fl">10</span>,phenos <span class="op">=</span><span class="va">phenos</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># 3D landscape visualization after applying iPheGWAS</span></span>
-<span class="r-in"><span class="co"># Passing the order from the iPheGWAS function</span></span>
-<span class="r-in"><span class="fu">landscapefast</span><span class="op">(</span><span class="va">y</span>,sliceval <span class="op">=</span> <span class="fl">10</span>,phenos <span class="op">=</span> <span class="fu"><a href="iphegwas.html">iphegwas</a></span><span class="op">(</span><span class="va">phenos</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">#3D landscape visualization of chromosome number 19 (above a threshold of -log10 (p) 7.5)</span></span>
-<span class="r-in"><span class="fu">landscapefast</span><span class="op">(</span><span class="va">y</span>,sliceval <span class="op">=</span> <span class="fl">7.5</span>,chromosome <span class="op">=</span> <span class="fl">19</span>,phenos <span class="op">=</span><span class="va">phenos</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># 3D landscape-viz of chromosome 19, gene view active(threshold &gt; -log10(p) 7.5)</span></span>
-<span class="r-in"><span class="fu">landscape</span><span class="op">(</span><span class="va">y</span>,sliceval <span class="op">=</span> <span class="fl">7.5</span>,chromosome <span class="op">=</span> <span class="fl">19</span>, geneview <span class="op">=</span> <span class="cn">TRUE</span>,phenos <span class="op">=</span><span class="va">phenos</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># 3D landscape-viz with calculate-LD and mutual-LD functionality active</span></span>
-<span class="r-in"><span class="fu">landscapefast</span><span class="op">(</span><span class="va">y</span>, sliceval <span class="op">=</span> <span class="fl">30</span>, chromosome <span class="op">=</span> <span class="fl">19</span>,calculateLD<span class="op">=</span> <span class="cn">TRUE</span>,mutualLD <span class="op">=</span> <span class="cn">TRUE</span>,phenos <span class="op">=</span><span class="va">phenos</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># here y is output from function fastprocessphegwas</span></span></span>
+<span class="r-in"><span><span class="co"># 3D landscape-viz of all the phenos across the base pair positions(threshold &gt; -log10(p) 7.5)</span></span></span>
+<span class="r-in"><span><span class="co"># Without iPheGWAS you get output in the order you pass phenos</span></span></span>
+<span class="r-in"><span><span class="fu">landscapefast</span><span class="op">(</span><span class="va">y</span>,sliceval <span class="op">=</span> <span class="fl">10</span>,phenos <span class="op">=</span><span class="va">phenos</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># 3D landscape visualization after applying iPheGWAS</span></span></span>
+<span class="r-in"><span><span class="co"># Passing the order from the iPheGWAS function</span></span></span>
+<span class="r-in"><span><span class="fu">landscapefast</span><span class="op">(</span><span class="va">y</span>,sliceval <span class="op">=</span> <span class="fl">10</span>,phenos <span class="op">=</span> <span class="fu"><a href="iphegwas.html">iphegwas</a></span><span class="op">(</span><span class="va">phenos</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#3D landscape visualization of chromosome number 19 (above a threshold of -log10 (p) 7.5)</span></span></span>
+<span class="r-in"><span><span class="fu">landscapefast</span><span class="op">(</span><span class="va">y</span>,sliceval <span class="op">=</span> <span class="fl">7.5</span>,chromosome <span class="op">=</span> <span class="fl">19</span>,phenos <span class="op">=</span><span class="va">phenos</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># 3D landscape-viz of chromosome 19, gene view active(threshold &gt; -log10(p) 7.5)</span></span></span>
+<span class="r-in"><span><span class="fu">landscape</span><span class="op">(</span><span class="va">y</span>,sliceval <span class="op">=</span> <span class="fl">7.5</span>,chromosome <span class="op">=</span> <span class="fl">19</span>, geneview <span class="op">=</span> <span class="cn">TRUE</span>,phenos <span class="op">=</span><span class="va">phenos</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># 3D landscape-viz with calculate-LD and mutual-LD functionality active</span></span></span>
+<span class="r-in"><span><span class="fu">landscapefast</span><span class="op">(</span><span class="va">y</span>, sliceval <span class="op">=</span> <span class="fl">30</span>, chromosome <span class="op">=</span> <span class="fl">19</span>,calculateLD<span class="op">=</span> <span class="cn">TRUE</span>,mutualLD <span class="op">=</span> <span class="cn">TRUE</span>,phenos <span class="op">=</span><span class="va">phenos</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -134,7 +157,7 @@ chromosome view the max peak is selected</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -558,7 +558,7 @@ ldscmod <- function(pathname,ldscpath, dentogram = FALSE, plot = FALSE){
     x <- readLines(fileline)
     selected_lines <- str_subset(x,str_replace(fileline,".ldsc.log",""))[-c(1:3)]
     # getting the numbers to extract the first element
-    selected_names <- unlist(purrr::map(selected_lines,strsplit,"\\s+"),recursive = FALSE)
+    # selected_names <- unlist(purrr::map(selected_lines,strsplit,"\\s+"),recursive = FALSE)
     ## I can flatten
     selected_names <- purrr::flatten(purrr::map(selected_lines,strsplit,"\\s+"))
     # selected_numbers <- map(selected_lines,~discard(as.numeric(unlist(str_split(.,pattern = " "))),is.na))

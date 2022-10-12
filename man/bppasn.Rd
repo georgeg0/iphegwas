@@ -21,4 +21,4 @@ A data frame
 \description{
 The dataset 'bppasn' is a data.frame object with the LD blocks for asian population.
 }
-\keyword{datasets}
+\keyword{internal}
