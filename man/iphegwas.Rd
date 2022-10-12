@@ -4,7 +4,7 @@
 \alias{iphegwas}
 \title{Prepare the dataframe to pass to landscape function}
 \usage{
-iphegwas(phenos, dentogram = FALSE)
+iphegwas(phenos, dentogram = FALSE, pathname = FALSE)
 }
 \arguments{
 \item{phenos}{Vector of names of dataframes that need to do iPheGWAS on.}

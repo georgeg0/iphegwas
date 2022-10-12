@@ -1,21 +1,18 @@
 ---
 title: "iPheGWAS - Bringing intelligence to an improved PheGWAS"
 output:
+  html_document:
+    toc: yes
+    df_print: paged
   knitr:::html_vignette:
-    toc: true
+    toc: yes
     fig_caption: yes
   pdf_document:
     highlight: null
     number_sections: yes
-vignette: >
-  %\VignetteIndexEntry{PheGWAS2}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{dplyr}
-  %\VignetteDepends{httr}
-  %\VignetteDepends{jsonlite}
-  %\VignetteDepends{xml2}
-  %\VignetteDepends{stringr}
+vignette: "%\\VignetteIndexEntry{iphegwas} %\\VignetteEncoding{UTF-8} %\\VignetteDepends{dplyr}
+  %\\VignetteDepends{httr} %\\VignetteDepends{jsonlite} %\\VignetteDepends{xml2} %\\VignetteDepends{stringr}
+  %\\VignetteEngine{knitr::rmarkdown}\n"
 ---
 
 ```{r, include = FALSE}
@@ -89,6 +86,36 @@ You can also run the iPheGWAS module independently to examine the dendrograms.
 
 ```{r}
 iphegwas(phenos,dentogram = TRUE)
+```
+
+We also have an LDSC module to calculate; (We use LDSC python modules https://github.com/bulik/ldsc for this - thanks to LDSC team)
+* Ordered traits based on the LDSC
+* Genetic correlation plot
+* Dendrogram based on LDSC
+* You also get a `correlationmatrix` in your global environment that you can use later. If `correlationmatrix` exist in your global environment then `ldscmod` won't recalculate the rg, but you can use `ldscmod` with `dentogram = TRUE` and `plot = TRUE`.
+
+You need to pass the `pathname` and `ldscpath`. The path name is the absolute path to the folder containing the summary statistics for which you want to find the genetic correlation. You must have the summary statistics in this folder, or else you will get an error. All the additional files that ldsc generates will also be put into the location `pathname` for later reference if you are interested in looking at those files for additional information that LDSC provides.
+
+```{r}
+pathname <- system.file("extdata", "samplesummary", package = "iphegwas")
+ldscpath <- system.file("extdata", "ldsc", package = "iphegwas")
+```
+If you want to order the traits in the landscape based on the genetic correlation, then you pass the order what you get from the ldsc module.
+
+```{r}
+landscapefast(yy,sliceval = 7,phenos = ldscmod(pathname,ldscpath))
+```
+
+You can also run the ldsc module independently to examine the dendrograms (using LDSC). 
+
+```{r}
+ldscmod(pathname,ldscpath,dentogram = TRUE)
+```
+
+You can also run the ldsc module independently to get the genetic correlation plot (using LDSC). 
+
+```{r}
+ldscmod(pathname,ldscpath,plot = TRUE)
 ```
 
 In addition to the heuristic approach that we developed, all the functionalities outlined in the ***PheGWAS*** are also available in ***iphegwas*** package. Considering performance in mind, the entire codebase is rewritten, and you will notice that the iphegwas package is faster than the PheGWAS package. Adding here the code from the PheGWAS vignette.
