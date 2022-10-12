@@ -476,3 +476,122 @@ if(dentogram){
   phenos[res.hc1$order]
 }
 }
+
+#' Function to use LDSC
+#' @import tidyverse
+#' @import purrr
+#' @import factoextra
+#' @import cluster
+#' @import seriation
+#' @param pathname The folder that contains the summary stats to use for LDSC
+#' @param ldscpath Path to the LDSC GitHub folder in your computer
+#' @param dentogram If TRUE returns dentogram using LDSC method
+#' @param plot If TRUE returns rg correlation plot using LDSC method
+#'
+#' @return Default LDSC ordering/ dentogram is TRUE/ rg plot if TRUE
+#' @details if used for LDSC ordering then summary stats file names should match with the phenos that you are passing to the landscape function.
+#' @details You should have a ldsc conda environment that you use for running LDSC. Details here https://github.com/bulik/ldsc
+#' @author George Gittu
+#' @examples
+#' \dontrun{
+#' ## Giving absolute file path
+#' pathname <- "/Users/ggeorg02/Desktop/databetasefiltered/files_ldsc/"
+#' ldscpath <- "/Users/ggeorg02/Desktop/GitHub/ldsc"
+#' # This gives the order after applying LDSC. We can pass this order to the landscape function
+#' ldscmod(pathname,ldscpath)
+#' ldscmod(pathname,ldscpath,dentogram = TRUE)
+#' ldscmod(pathname,ldscpath,plot = TRUE)
+#' }
+ldscmod <- function(pathname,ldscpath, dentogram = FALSE, plot = FALSE){
+  if(!exists("correlationmatrix")){
+  munge_summary <- function(pathfile,ldscpath){
+    hm3 <- system.file("extdata", "w_hm3.snplist", package = "iphegwas")
+    command <- glue::glue(
+      "{ldscpath}/munge_sumstats.py ",
+      "--sumstats {pathfile} ",
+      "--chunksize 500000 ",
+      "--out {pathfile} ",
+      "--merge-alleles {hm3}",
+    )
+    # assumption user use ldsc conda env
+    system(paste("source ~/.zshrc && conda activate ldsc && ",command))
+    paste0("Munged ",path_file(pathname))
+  }
+
+  ldsc_rg <- function(pathname, ldscpath) {
+    files_sumstats <- as.character(dir_ls(pathname,type = "file",glob = "*.sumstats.gz"))
+    ld <- system.file("extdata", "eur_w_ld_chr", package = "iphegwas")
+    i = 0
+    while( i < length(files_sumstats) ){
+      rg_val <- str_flatten(files_sumstats,collapse = ",")
+      print(glue::glue("Processing for {files_sumstats[1]}"))
+      command <- glue::glue(
+        "{ldscpath}/ldsc.py ",
+        "--rg {rg_val} ",
+        "--ref-ld-chr {ld}/ ",
+        "--w-ld-chr {ld}/ ",
+        "--out {files_sumstats[1]}.ldsc"
+      )
+      files_sumstats <- c(files_sumstats[-1],files_sumstats[1])
+      i = i + 1
+      # assumption user use ldsc conda env
+      system(paste("source ~/.zshrc && conda activate ldsc && ",command))
+    }
+  }
+
+  rg_extract <- function(fileline){
+    x <- readLines(fileline)
+    selected_lines <- str_subset(x,str_replace(fileline,".ldsc.log",""))[-c(1:3)]
+    # getting the numbers to extract the first element
+    selected_names <- unlist(purrr::map(selected_lines,strsplit,"\\s+"),recursive = FALSE)
+    ## I can flatten
+    selected_names <- purrr::flatten(purrr::map(selected_lines,strsplit,"\\s+"))
+    # selected_numbers <- map(selected_lines,~discard(as.numeric(unlist(str_split(.,pattern = " "))),is.na))
+    # selecting the 3rd elelemt from list of list which is the rg
+    rg <- as.numeric(map_chr(selected_names, 3))
+    phenosrow <- purrr::map_chr(purrr::map_chr(selected_names, 1),~str_replace(path_file(.),".tsv.sumstats.gz",""))
+    phenoscol <- purrr::map_chr(purrr::map_chr(selected_names, 2),~str_replace(path_file(.),".tsv.sumstats.gz",""))
+    correlationmatrix_iphe[unique(phenosrow),phenoscol] <<- rg
+    diag(correlationmatrix) <<- 1
+    .GlobalEnv$correlationmatrix <- correlationmatrix
+    correlationmatrix
+  }
+  files <- dir_ls(pathname,type = "file")
+  purrr::map(files,munge_summary,ldscpath)
+  ldsc_rg(pathname,ldscpath)
+  files_ldsc <- as.character(dir_ls(pathname,type = "file",glob = "*.ldsc.log"))
+  phenos <- str_extract(path_file(files_ldsc),"[^.]+")
+  correlationmatrix <- data.frame(matrix(nrow = length(files_ldsc),ncol = length(files_ldsc)))
+  rownames(correlationmatrix) <- colnames(correlationmatrix) <- phenos
+  purrr::map(files_ldsc,rg_extract)
+  }
+  files_ldsc <- as.character(dir_ls(pathname,type = "file",glob = "*.ldsc.log"))
+  phenos <- str_extract(path_file(files_ldsc),"[^.]+")
+  if(plot){
+    col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+    col <- colorRampPalette(c( "#4477AA", "#77AADD", "#FFFFFF","#EE9988" ,"#BB4444"))
+    return(corrplot(as.matrix(correlationmatrix), method="circle", col=col(200),
+                     addCoef.col = "black", # Add coefficient of correlation
+                     tl.col="black", tl.srt=45, #Text label color and rotation
+                     is.corr = FALSE))
+  }
+  B <- abs(correlationmatrix)
+  BB <- as.dist(1- B)
+  res.hc1 <- hclust(d = BB,method = "mcquitty") #>>
+  res.hc1 <- reorder(res.hc1, BB, method = "OLO")
+  if(dentogram){
+    ## Finding optimal number of cluster using silhouette
+    silh <- fviz_nbclust(B, FUN = hcut, method = "silhouette",k.max=nrow(B)-1)
+    kcluster <- as.numeric(silh$data[which.max(silh$data$y),]$clusters)
+    dendo <- fviz_dend(res.hc1, k = kcluster, # Cut in four groups
+                       cex = .6, # label size
+                       k_colors = c("#2E9FDF", "#00AFBB", "#E7B800", "#FC4E07"),
+                       color_labels_by_k = TRUE, # color labels by groups
+                       rect = TRUE,
+                       main = "Dentogram LDSC"# Add rectangle around groups,
+    )
+    return(dendo)
+  } else {
+    return(phenos[res.hc1$order])
+  }
+}
