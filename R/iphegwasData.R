@@ -102,7 +102,7 @@
 #'   \item stop is the end position of the chromosome
 #' }
 #'
-#' @keywords datasets
+#' @keywords internal
 #' @return A data frame
 #'
 "bppeur"
@@ -122,7 +122,7 @@
 #'   \item stop is the end position of the chromosome
 #' }
 #'
-#' @keywords datasets
+#' @keywords internal
 #' @return A data frame
 #'
 "bppasn"
@@ -142,7 +142,7 @@
 #'   \item stop is the end position of the chromosome
 #' }
 #'
-#' @keywords datasets
+#' @keywords internal
 #' @return A data frame
 #'
 "bppafr"
