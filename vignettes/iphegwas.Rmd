@@ -22,9 +22,9 @@ knitr::opts_chunk$set(
   comment = "#>",fig.width=12, fig.height=9, message=FALSE, tidy=TRUE, dpi=75)
 ```
 
-iPheGWAS module is developed to bring intelligence into PheGWAS by incorporating a new heuristic approach developed by our team to order traits based on its genetic correlation quickly and efficiently. As a result, the iPheGWAS module is integrated seamlessly into the PheGWAS module. We also improved the previous PheGWAS codebase for faster landscape visualization.
+iPheGWAS (intelligent -PheGWAS) module is developed to bring intelligence into PheGWAS by incorporating a new heuristic approach developed by our team to order traits based on its genetic correlation quickly and efficiently. As a result, the iPheGWAS module is integrated seamlessly into the PheGWAS module. We also improved the previous PheGWAS codebase for faster landscape visualization.
 
-This package is packaged with datasets used in PheGWAS and some datasets to demonstrate iPheGWAS. If you are looking for the entire data used for studies 1 and 2 in iPheGWAS, please download it from [here](https://drive.google.com/drive/folders/1975iMOimOQ1GyzxpIBYLG41tXnBOG03y?usp=sharing). Checkout the individual datasets [here](https://drive.google.com/drive/folders/1_tCKT8yOtMsjkc_O8G0AQoEFA2HqX-gp?usp=sharing).
+This package is packaged with datasets used in PheGWAS and some datasets to demonstrate iPheGWAS and from the paper. If you are looking for the entire data used for studies 1 and 2 in iPheGWAS, please download it from [here](https://drive.google.com/drive/folders/1975iMOimOQ1GyzxpIBYLG41tXnBOG03y?usp=sharing). Checkout the individual datasets [here](https://drive.google.com/drive/folders/1_tCKT8yOtMsjkc_O8G0AQoEFA2HqX-gp?usp=sharing).
 
 Here are the datasets that are available from iPheGWAS study2 within the package.
 
@@ -33,24 +33,47 @@ Here are the datasets that are available from iPheGWAS study2 within the package
 - CrohnsDisease
 - UlcerativeColitis
 - bmi
-- hdl
-- ldl
-- tchol
-- bmi
 
-
+Loading iphegwas package;
 
 ```{r setup}
 library(iphegwas)
 ```
 
-To run PheGWAS, pass the dataframe names available in your environment to fastprocessphegwas as vector of dataframe names.
+# Using iphegwas module
 
-Before passing the dataframe makes sure your preprocess your GWAS summarystats dataframe to have columns named in this way.
+Your GWAS summarystats file/dataframe should have columns named in this way.
 
 ```
-CHR     BP       rsid A1 A2    beta     se P.value gene
+CHR     BP       rsid A1 A2    beta     se P.value
 ```
+
+You can fun iPheGWAS in 2 modes, 
+- Mode 1: Folder path to the summary statistics file.
+- Mode 2: Passing the dataframe names available in your environment to iphegwas module as vector of dataframe names.
+
+## Mode 1
+
+```{r}
+## Giving absolute file path
+## pathname <- "<path to your folder>"
+pathname <- system.file("extdata", "samplesummary", package = "iphegwas")
+iphegwas(pathname = pathname,dentogram = TRUE)
+```
+
+We can use `iphegwas` module in iPheGWAS package to determine the genetic similarity between the traits. If we pass the argument `dentogram = TRUE`, it will give a dentogram that is ordered based on the genetic similarity and give further insights to it's genetic architecture (for more details checkout paper).
+
+```{r}
+iphegwas(pathname = pathname,dentogram = TRUE)
+```
+
+Passing it without `dentogram = TRUE` will return ordered traits. This is useful to pass to the PheGWAS module to order similar traits in the PheGWAS landscape.
+
+```{r}
+iphegwas(pathname = pathname)
+```
+
+## Mode 2
 
 ```{r}
 head(ibd,3)
@@ -66,14 +89,26 @@ CrohnsDisease <- CrohnsDisease
 UlcerativeColitis <- UlcerativeColitis
 ```
 
-The gene column is optional. There is an option to map genes to rsid if you want this, please set `genemap = TRUE` (By default it is set to `FALSE`). If `TRUE` it will take some time as it is using Gene BioMart Module to map genes internally.
+Generating dentrograms
 
 ```{r}
 phenos <- c("ibd","bmi","CrohnsDisease","UlcerativeColitis","Wasisthipratio")
+iphegwas(phenos,dentogram = TRUE)
+```
+
+```{r}
+iphegwas(phenos)
+```
+
+## Integration with PheGWAS
+
+The ordering of the PheGWAS landscape is based on the order in which the user passed the phenotypes. So the order here is meaningless, and when dealing with many phenotypes, it is often the case that we would like to group the traits based on their genetic similarity for further investigation on genetic architecture and the correlation drivers from the landscape. 
+
+```{r}
 yy <- fastprocessphegwas(phenos)
 ```
 
-Once the processing is done, pass the dataframe that you got from `fastprocessphegwas` to `landscapefast` to see the landscape; Here, the landscape orders in the order that we are passing the `phenos`.
+Once the processing is done, pass the dataframe that you got from `fastprocessphegwas` to `landscapefast` to see the landscape; Here, the landscape orders are in the order that we are passing the `phenos`.
 
 ```{r}
 print(phenos)
@@ -83,48 +118,50 @@ print(phenos)
 landscapefast(yy,sliceval = 7,phenos =phenos)
 ```
 
-If you want to order the traits in the landscape based on the genetic correlation, then you pass the order what you get from the iphegwas module.
+If you want to order the traits in the landscape based on genetic similarity, then you pass the order that you get from the iphegwas module.
 
 ```{r}
 landscapefast(yy,sliceval = 7,phenos = iphegwas(phenos))
 ```
 
-You can also run the iPheGWAS module independently to examine the dendrograms. 
 
-```{r}
-iphegwas(phenos,dentogram = TRUE)
-```
+# Using ldsc module
 
-We also have an LDSC module to calculate; (We use LDSC python modules https://github.com/bulik/ldsc for this - thanks to LDSC team)
+Often our users use the iphegwas modules to get insights on all the traits quickly, so they can pick the traits they are interested in and pass those traits to the LDSC module for its genetic correlation values. To develop this R module ( ldscmod ) , we used [LDSC python modules](https://github.com/bulik/ldsc) - thanks to the LDSC team.
 
-- Ordered traits based on the LDSC
+You can use the `ldscmod` to calculate;
+
 - Genetic correlation plot
+- You also get a `correlationmatrix` in your global environment that you can use later. If `correlationmatrix` exist in your global environment then `ldscmod` won't recalculate the rg, but you can use ldscmod with `dentogram = TRUE` and `plot = TRUE`.
+- Ordered traits based on the LDSC
 - Dendrogram based on LDSC
-- You also get a `correlationmatrix` in your global environment that you can use later. If `correlationmatrix` exist in your global environment then `ldscmod` won't recalculate the rg, but you can use `ldscmod` with `dentogram = TRUE` and `plot = TRUE`.
 
-You need to pass the `pathname` and `ldscpath`. The path name is the absolute path to the folder containing the summary statistics for which you want to find the genetic correlation. You must have the summary statistics in this folder, or else you will get an error. All the additional files that ldsc generates will also be put into the location `pathname` for later reference if you are interested in looking at those files for additional information that LDSC provides.
+You need to pass the `pathname` and `ldscpath`. The path name is the absolute path to the folder containing the summary statistics for which you want to find the genetic correlation. You must have only summary statistics in this folder, or else you will get an error. All the additional files that LDSC generates will also be put into the location `pathname` for later reference if you are interested in looking at those files for additional metrics that LDSC provides.
 
 ```{r}
 pathname <- system.file("extdata", "samplesummary", package = "iphegwas")
 ldscpath <- system.file("extdata", "ldsc", package = "iphegwas")
 ```
-If you want to order the traits in the landscape based on the genetic correlation, then you pass the order what you get from the ldsc module.
+
+Using ldscmod to get the genetic correlation plot (using LDSC). 
 
 ```{r}
-landscapefast(yy,sliceval = 7,phenos = ldscmod(pathname,ldscpath))
+ldscmod(pathname,ldscpath,plot = TRUE)
 ```
 
-You can also run the ldsc module independently to examine the dendrograms (using LDSC). 
+Using ldscmod to examine the dendrograms (using LDSC). 
 
 ```{r}
 ldscmod(pathname,ldscpath,dentogram = TRUE)
 ```
 
-You can also run the ldsc module independently to get the genetic correlation plot (using LDSC). 
+If you want to order the traits in the landscape based on the genetic correlation from LDSC, then you pass the order what you get from the ldsc module.
 
 ```{r}
-ldscmod(pathname,ldscpath,plot = TRUE)
+landscapefast(yy,sliceval = 7,phenos = ldscmod(pathname,ldscpath))
 ```
+
+# PheGWAS features
 
 In addition to the heuristic approach that we developed, all the functionalities outlined in the ***PheGWAS*** are also available in ***iphegwas*** package. Considering performance in mind, the entire codebase is rewritten, and you will notice that the iphegwas package is faster than the PheGWAS package. Adding here the code from the PheGWAS vignette.
 
@@ -141,6 +178,8 @@ LDL <- ldl
 TRIGS <- trig
 TOTALCHOLESTROL <- tchol
 ```
+
+_Note:_ The gene column is optional. There is an option to map genes to rsid if you want this, please set `genemap = TRUE` (By default it is set to `FALSE`). If `TRUE` it will take some time as it is using Gene BioMart Module to map genes internally.
 
 The dataframe’s are passed to processphegwas function as a list of dataframe’s.
 
